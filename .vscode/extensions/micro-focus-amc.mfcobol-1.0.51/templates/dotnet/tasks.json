@@ -1,0 +1,34 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "mf-process",
+			"command": "dotnet",
+			"args": [
+				"build",
+				"###ProjFilePath###"
+			],
+			"problemMatcher": [
+				"$COBOLMSBuild"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"label": "COBOL: dotnet build"
+		},
+		{
+			"type": "mf-process",
+			"command": "dotnet",
+			"args": [
+				"publish",
+				"###ProjFilePath###"
+			],
+			"problemMatcher": [
+				"$COBOLMSBuild"
+			],
+			"group": "build",
+			"label": "COBOL: dotnet publish"
+		}
+	]
+}

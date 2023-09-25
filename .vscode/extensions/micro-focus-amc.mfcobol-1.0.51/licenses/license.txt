@@ -1,0 +1,41 @@
+﻿# Additional License Authorizations
+
+## For Micro Focus Extensions for Visual Studio Code
+
+Micro Focus, an OpenText company
+
+This Additional License Authorizations document (“ALA”) set forth the additional specific software license terms that govern the authorized use of the software products specified below, and are part of the applicable agreement (i.e., Micro Focus End User License Agreement; and/or any separate agreement that grants Licensee a license to such products (e.g., Customer Portfolio Terms or other Master Agreement); and/or Quotation) (the “Applicable Agreement”). Capitalized terms used but not defined herein shall have the meanings set forth in the Applicable Agreement.
+
+### Products covered
+
+Products                                                | E-LTU or E-Media available (1) | Non-production software class (if available) | Term License Non-production software class (if available) (2)
+---                                                     | ---                            | ---                                          | ---
+Learn COBOL Extension for Visual Studio Code            | Yes                            | Class 2                                      | Class 2
+Micro Focus COBOL Extension for Visual Studio Code      | Yes                            | Class 2                                      | Class 2
+Micro Focus Enterprise Extension for Visual Studio Code | Yes                            | Class 2                                      | Class 2
+
+1. Any product sold as E-LTU or E-Media shall be delivered electronically regardless of any contrary designation in a purchase order.
+2. Additional licenses solely for non-production use may be available as specified in the Non-Production Licensing Guide found at software.microfocus.com/legal/software-licensing depending on the non-production software class specified above. Any such non-production licenses will be subject to the Non-Production Licensing Guide and the applicable terms and conditions set forth in this ALA.
+
+## Software Specific Terms
+
+Learn COBOL Extension for Visual Studio Code, Micro Focus COBOL Extension for Visual Studio Code, Micro Focus Enterprise Extension for Visual Studio Code.
+
+This Licensed Software may be used solely with Visual Studio Code or derivatives thereof. Additional functionality in the Licensed Software may be available if used with a validly licensed copy of certain Licensor software products. In such event,
+the license terms applicable to such software products shall continue to apply to such software and not be affected by this ALA. No support or maintenance is provided or available for this Licensed Software except where otherwise agreed by Licensor in writing.
+
+Licensee shall not use the Licensed Software, nor reproduce or distribute any files supplied as part of the Licensed Software, in order to create a compiler, interpreter, runtime support product or any other product that is generally competitive with or a substitute for any Licensor product.
+
+The Licensed Software may come with or provide Licensee with the ability to download additional Licensor software packages or products, such as MF-COBOL Community Edition, which may only be used for Licensee’s internal educational purposes and may not be used to create applications for use or distribution.
+
+Additional License Authorizations
+
+For Micro Focus Extensions for Visual Studio Code
+
+https://www.microfocus.com/en-us/legal/software-licensing
+
+Latest version of software licensing documents
+
+Micro Focus, an OpenText company
+
+© Copyright 2021, 2023 Open Text.

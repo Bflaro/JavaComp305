@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ProjectSchemaDefinitions
+    xmlns="http://schemas.microsoft.com/build/2009/properties">
+
+    <ContentType
+        Name="COBOLFile"
+        DisplayName="COBOL file"
+        ItemType="Compile">
+    </ContentType>
+
+    <ContentType
+        Name="Text"
+        DisplayName="Text file"
+        ItemType="None">
+    </ContentType>
+
+    <ItemType Name="None" DisplayName="Does not participate in build"/>
+
+    <FileExtension Name=".txt" ContentType="Text"/>
+
+    <ItemType Name="Compile" DisplayName="COBOL compiler"/>
+    <ItemType Name="AdditionalFiles" DisplayName="COBOL analyzer additional file"/>
+
+    <FileExtension Name=".cbl" ContentType="COBOLFile"/>
+
+</ProjectSchemaDefinitions>
+

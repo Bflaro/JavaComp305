@@ -1,0 +1,241 @@
+{
+	"name": "fabric8-analytics",
+	"displayName": "Red Hat Dependency Analytics",
+	"description": "Provides insights on security vulnerabilities in your application dependencies.",
+	"version": "0.7.0",
+	"author": "Red Hat",
+	"publisher": "redhat",
+	"preview": true,
+	"contributors": [
+		{
+			"name": "Ilona Shishov",
+			"email": "ishishov@redhat.com"
+		}
+	],
+	"license": "Apache-2.0",
+	"bugs": {
+		"url": "https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/issues",
+		"email": "arajkuma@redhat.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension"
+	},
+	"homepage": "https://github.com/fabric8-analytics/fabric8-analytics-vscode-extension/blob/master/README.md",
+	"categories": [
+		"Other"
+	],
+	"keywords": [
+		"security",
+		"vulnerability",
+		"dependency scan",
+		"node",
+		"java",
+		"multi-root ready",
+		"CVE"
+	],
+	"icon": "icon/trusted_content_icon.png",
+	"engines": {
+		"vscode": "^1.50.0"
+	},
+	"activationEvents": [
+		"workspaceContains:**/package.json",
+		"workspaceContains:**/pom.xml"
+	],
+	"main": "./dist/extension",
+	"contributes": {
+		"commands": [
+			{
+				"command": "fabric8.stackAnalysis",
+				"title": "Stack Report...",
+				"category": "Red Hat Dependency Analytics"
+			},
+			{
+				"command": "fabric8.stackAnalysisFromPieBtn",
+				"title": "Open Vulnerability Report",
+				"icon": {
+					"light": "icon/report-icon.png",
+					"dark": "icon/report-icon.png"
+				}
+			},
+			{
+				"command": "fabric8.stackAnalysisFromEditor",
+				"title": "Red Hat Dependency Analytics Report..."
+			},
+			{
+				"command": "fabric8.stackAnalysisFromExplorer",
+				"title": "Red Hat Dependency Analytics Report..."
+			},
+			{
+				"command": "fabric8.fabric8AnalyticsStackLogs",
+				"title": "Debug logs",
+				"category": "Red Hat Dependency Analytics"
+			}
+		],
+		"menus": {
+			"editor/title": [
+				{
+					"command": "fabric8.stackAnalysisFromPieBtn",
+					"when": "resourceFilename == pom.xml",
+					"group": "navigation"
+				},
+				{
+					"command": "fabric8.stackAnalysisFromPieBtn",
+					"when": "resourceFilename == package.json",
+					"group": "navigation"
+				}
+			],
+			"explorer/context": [
+				{
+					"command": "fabric8.stackAnalysisFromExplorer",
+					"when": "resourceFilename == package.json"
+				},
+				{
+					"command": "fabric8.stackAnalysisFromExplorer",
+					"when": "resourceFilename == pom.xml"
+				}
+			],
+			"editor/context": [
+				{
+					"command": "fabric8.stackAnalysisFromEditor",
+					"when": "resourceFilename == package.json"
+				},
+				{
+					"command": "fabric8.stackAnalysisFromEditor",
+					"when": "resourceFilename == pom.xml"
+				}
+			],
+			"commandPalette": [
+				{
+					"command": "fabric8.stackAnalysisFromPieBtn",
+					"when": "false"
+				},
+				{
+					"command": "fabric8.stackAnalysisFromEditor",
+					"when": "false"
+				},
+				{
+					"command": "fabric8.stackAnalysisFromExplorer",
+					"when": "false"
+				}
+			]
+		},
+		"configurationAttributes": {
+			"launch": {
+				"properties": {
+					"pythonPath": {
+						"type": "string",
+						"description": "Path (fully qualified) to python executable. Defaults to the value in settings.json",
+						"default": "${config:python.pythonPath}"
+					}
+				}
+			}
+		},
+		"configuration": {
+			"type": "object",
+			"title": "Openshift.io configuration",
+			"properties": {
+				"redhat.telemetry.enabled": {
+					"type": "boolean",
+					"default": null,
+					"markdownDescription": "Enable usage data and errors to be sent to Red Hat servers. Read our [privacy statement](https://developers.redhat.com/article/tool-data-collection).",
+					"scope": "window"
+				},
+				"redHatDependencyAnalyticsServer.maxNumberOfProblems": {
+					"type": "number",
+					"default": 100,
+					"description": "Controls the maximum number of problems produced by the server."
+				},
+				"redHatDependencyAnalyticsServer.trace.server": {
+					"type": "string",
+					"enum": [
+						"off",
+						"messages",
+						"verbose"
+					],
+					"default": "off",
+					"description": "Traces the communication between VSCode and the redHatDependencyAnalyticsServer service."
+				},
+				"redHatDependencyAnalytics.exhortSnykToken": {
+					"type": "string",
+					"default": "",
+					"description": "Red Hat Dependency Analytics server authentication token for Snyk.",
+					"scope": "window"
+				},
+				"redHatDependencyAnalytics.redHatDependencyAnalyticsReportFilePath": {
+					"type": "string",
+					"default": "/tmp/redhatDependencyAnalyticsReport.html",
+					"description": "Path to a local file where the Red Hat Dependency Analytics report will be saved.",
+					"scope": "window"
+				},
+				"maven.executable.path": {
+					"type": "string",
+					"default": "",
+					"description": "Specifies absolute path of mvn executable.",
+					"scope": "window"
+				},
+				"npm.executable.path": {
+					"type": "string",
+					"default": "",
+					"description": "Specifies absolute path of npm executable.",
+					"scope": "window"
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "webpack --mode production",
+		"webpack": "webpack --mode development",
+		"webpack-dev": "webpack --mode development --watch",
+		"compile": "tsc -b",
+		"posttest-compile": "./transformToDynamicImport.sh",
+		"test-compile": "tsc -p ./",
+		"test": "node ./out/test/runTest.js",
+		"reinstall": "npm cache verify && npm install",
+		"lint": "tslint -c tslint.json src/*.ts"
+	},
+	"devDependencies": {
+		"@types/glob": "^8.1.0",
+		"@types/mocha": "^10.0.1",
+		"@types/node": "^20.2.5",
+		"@types/sinon": "^10.0.15",
+		"@types/vscode": "^1.50.0",
+		"@vscode/test-electron": "^2.3.2",
+		"chai": "^4.3.7",
+		"decache": "^4.6.1",
+		"istanbul": "^0.4.5",
+		"mocha": "^10.2.0",
+		"mocha-jenkins-reporter": "^0.4.8",
+		"nyc": "^15.1.0",
+		"remap-istanbul": "^0.13.0",
+		"sinon": "^15.1.0",
+		"sinon-chai": "^3.7.0",
+		"source-map-loader": "^4.0.1",
+		"supports-color": "^9.3.1",
+		"ts-loader": "^9.4.3",
+		"ts-node": "^10.9.1",
+		"tslint": "^5.19.0",
+		"typescript": "^5.1.3",
+		"webpack": "^5.85.0",
+		"webpack-cli": "^5.1.1"
+	},
+	"dependencies": {
+		"@fabric8-analytics/fabric8-analytics-lsp-server": "^0.7.1-ea.4",
+		"@redhat-developer/vscode-redhat-telemetry": "^0.6.1",
+		"@RHEcosystemAppEng/exhort-javascript-api": "^0.0.2-alpha.4",
+		"fs": "^0.0.1-security",
+		"path": "^0.12.7",
+		"vscode-languageclient": "^8.1.0"
+	},
+	"__metadata": {
+		"id": "efcb43ca-77e6-43e4-8ddc-ada617cb34bd",
+		"publisherId": "eed56242-9699-4317-8bc7-e9f4b9bdd3ff",
+		"publisherDisplayName": "Red Hat",
+		"targetPlatform": "undefined",
+		"isApplicationScoped": false,
+		"updated": true,
+		"isPreReleaseVersion": false,
+		"installedTimestamp": 1694468360236,
+		"preRelease": false
+	}
+}

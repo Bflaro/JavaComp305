@@ -1,0 +1,73 @@
+{
+    "scopeName": "source.mfdirectives",
+    "patterns": [
+        {
+            "match": "^\\s*(@.*)",
+            "name": "keyword.preprocessor"
+        },
+        {
+            "match": "^\\s*(\\[)(.*?)(\\])",
+            "name": "entity.name.section.group-title.ini",
+            "captures": {
+                "1": {
+                    "name": "punctuation.definition.entity.ini"
+                },
+                "3": {
+                    "name": "punctuation.definition.entity.ini"
+                }
+            }
+        },
+        {
+            "match": "(^|\\s)#.*$",
+            "name": "comment"
+        },
+        {
+            "name": "string",
+            "begin": "\"",
+            "end": "\"|\n",
+            "patterns": [
+                {
+                    "include": "#interpolation"
+                }
+            ]
+        },
+        {
+            "name": "string",
+            "begin": "\\(",
+            "end": "\\)|\n",
+            "patterns": [
+                {
+                    "include": "#interpolation"
+                }
+            ]
+        },
+        {
+            "include": "#interpolation"
+        },
+        {
+            "match": "([0-9a-zA-Z\\-_=/\\\\]+)",
+            "name": "keyword"
+        },
+        {
+            "match": "[,;:.]",
+            "name": "punctuation.separator.delimiter"
+        }
+    ],
+    "repository": {
+        "interpolation": {
+            "name": "variable.interpolation",
+            "begin": "\\$\\{",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.section.embedded.begin"
+                }
+            },
+            "end": "\\}",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.section.embedded.end"
+                }
+            }
+        }
+    }
+}

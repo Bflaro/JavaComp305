@@ -1,0 +1,32 @@
+<!--
+ *
+ * (C) Copyright 1984-2022 Micro Focus or one of its affiliates.
+ *
+-->
+
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <MicroFocusTargetsDirectory Condition="'$(MicroFocusTargetsDirectory)' == ''">$(MSBuildThisFileDirectory)</MicroFocusTargetsDirectory>
+    </PropertyGroup>
+
+    <Choose>
+      <When Condition="'$(MSBuildAssemblyVersion)' == ''">
+         <PropertyGroup>
+            <COBOLTargetsPath>$(MicroFocusTargetsDirectory)\MicroFocus.COBOL.CurrentVersion.targets</COBOLTargetsPath>
+         </PropertyGroup>
+      </When>
+      <When Condition="'$(IsCrossTargetingBuild)' == 'true'">
+         <PropertyGroup>
+            <COBOLTargetsPath>$(MicroFocusTargetsDirectory)\MicroFocus.COBOL.CrossTargeting.targets</COBOLTargetsPath>
+          </PropertyGroup>
+      </When>
+      <Otherwise>
+         <PropertyGroup>
+            <COBOLTargetsPath>$(MicroFocusTargetsDirectory)\MicroFocus.COBOL.CurrentVersion.targets</COBOLTargetsPath>
+         </PropertyGroup>
+      </Otherwise>
+    </Choose>
+
+    <Import Project="$(COBOLTargetsPath)" />
+</Project>

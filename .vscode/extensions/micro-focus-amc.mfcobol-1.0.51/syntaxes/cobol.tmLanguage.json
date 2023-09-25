@@ -1,0 +1,179 @@
+{
+    "scopeName": "source.cobol",
+    "patterns": [
+        {
+            "match": "(^.{6})(\\*.*$)",
+            "captures": {
+                "1": {
+                    "name": "comment.margin.left"
+                },
+                "2": {
+                    "name": "comment.line"
+                }
+            }
+        },
+        {
+            "match": "(\\$.*)(\\*>.*)",
+            "captures": {
+                "1": {
+                    "name": "label"
+                },
+                "2": {
+                    "name": "comment.line"
+                }
+            }
+        },
+        {
+            "match": "(^.{6})(.{66})(.*$)",
+            "captures": {
+                "1": {
+                    "name": "comment"
+                },
+                "2": {
+                    "patterns": [
+                        {
+                            "include": "$self"
+                        }
+                    ]
+                },
+                "3": {
+                    "name": "comment"
+                }
+            }
+        },
+        {
+            "name": "comment.line",
+            "match": "\\*>.*$"
+        },
+        {
+            "match": "\\$.*$",
+            "name": "label"
+        },
+        {
+            "begin": "[bBgGhHnNoOuUxXzZ]?'",
+            "end": "'|$",
+            "name": "string.quoted.single"
+        },
+        {
+            "begin": "[bBgGhHnNoOuUxXzZ]?\"",
+            "end": "\"|$",
+            "name": "string.quoted.double"
+        },
+        {
+            "begin": "((?i:pic|picture))\\s+",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword"
+                }
+            },
+            "end": "\\.|\\s",
+            "patterns": [
+                {
+                    "name": "constant.numeric",
+                    "match": "[0-9]+"
+                },
+                {
+                    "match": "[0-9a-zA-Z$+-.]*[0-9a-zA-Z$+-]",
+                    "name": "string"
+                }
+            ]
+        },
+        {
+            "match": "([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)[^-a-zA-Z0-9]",
+            "captures": {
+                "1": {
+                    "name": "constant.numeric"
+                }
+            }
+        },
+        {
+            "match": "[-+*/&]|\\*\\*",
+            "name": "keyword.operator.arithmetic"
+        },
+        {
+            "match": "[<>=]|<=|>=|<>",
+            "name": "keyword.operator.comparison"
+        },
+        {
+            "match": "\\[|\\(",
+            "name": "punctuation.parenthesis.open"
+        },
+        {
+            "match": "\\]|\\)",
+            "name": "punctuation.parenthesis.close"
+        },
+        {
+            "match": ",",
+            "name": "punctuation.separator.delimiter"
+        },
+        {
+            "match": "\\.",
+            "name": "punctuation.terminator.period"
+        },
+        {
+            "match": "(::)\\s*([a-zA-Z][a-zA-Z0-9_]*)",
+            "captures": {
+                "1": {
+                    "name": "punctuation.separator.delimiter.accessor"
+                },
+                "2": {
+                    "name": "entity.name.class"
+                }
+            }
+        },
+        {
+            "match": ":",
+            "name": "punctuation.separator.delimiter.subscript"
+        },
+        {
+            "match": "((?i:class-id|interface-id|attribute-id|method-id|enum-id|program-id|function-id))\\s*(\\.?)\\s+([a-zA-Z]([a-zA-Z0-9_\\.+]*[a-zA-Z0-9_])?)",
+            "captures": {
+                "1": {
+                    "name": "keyword"
+                },
+                "2": {
+                    "name": "punctuation.terminator.period"
+                },
+                "3": {
+                    "patterns": [
+                        {
+                            "match": "(?i:get|set|new)",
+                            "name": "keyword"
+                        },
+                        {
+                            "name": "entity.name.class"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "match": "((?i:type of|type|new|attribute))\\s+([a-zA-Z]([a-zA-Z0-9_\\.+]*[a-zA-Z0-9_])?)",
+            "captures": {
+                "1": {
+                    "name": "keyword"
+                },
+                "2": {
+                    "name": "entity.name.class"
+                }
+            }
+        },
+        {
+            "captures": {
+                "1": {
+                    "name": "keyword"
+                }
+            },
+            "match": "((?i:__x01|__x02|__x03|__x04|__x05|3-d|absent|abstract|accept|access|acquire|action|active-class|active-x|actual|add|address-array|address-offset|address|adjustable-columns|advancing|afp-5a|after|aligned|alignment|all|allocate|allow|allowing|alphabet|alphabetic-lower|alphabetic-upper|alphabetic|alphanumeric-edited|alphanumeric|also|alter|alternate|and|any|apply|are|area|areas|arithmetic|as|ascending|assembly-attributes|assembly|assign|async-void|async|at|attach|attribute-id|attribute|attributes|author|auto-decimal|auto-hyphen-skip|auto-minimize|auto-resize|auto-skip|auto-spin|auto|automatic|autoterminate|await|ax-event-list|b-and|b-exor|b-left|b-not|b-or|b-right|b-xor|background-color|background-colour|background-high|background-low|background-standard|background|backward|bar|based|basis|beep|before|beginning|bell|binary-char|binary-double|binary-long|binary-short|binary|binary|bind|bit|bitmap-end|bitmap-handle|bitmap-number|bitmap-raw-height|bitmap-raw-width|bitmap-scale|bitmap-start|bitmap-timer|bitmap-trailing|bitmap-width|bitmap|blank|blink|blinking|blob-file|blob-locator|blob|block|bold|boolean|bottom|box|boxed|browsing|bulk-addition|busy|buttons|by|byte-length|byte|c01|c02|c03|c04|c05|c06|c07|c08|c09|c10|c11|c12|calendar-font|call|called|cancel-button|cancel|catch|cbl-ctr|cbl|ccol|cd|cell-color|cell-data|cell-font|cell-protection|cell|cells|center|centered-headings|centered|century-date|century-day|cf|ch|chain|chaining|changed|char-varying|char|character|characters|chart|check-box|checking|cics|class-attributes|class-control|class-id|class-object|class|classification|clear-selection|cline|clines|clob-file|clob-locator|clob|clock-units|close|cobol|code-set|code|coercion|col|collating|color|colors|colour|colours|cols|column-color|column-dividers|column-font|column-headings|column-protection|column|columns|com-reg|combo-box|comma|commit|commitment|common|communication|comp-0|comp-1|comp-2|comp-3|comp-4|comp-5|comp-6|comp-n|comp-x|comp|compression|computational-0|computational-1|computational-2|computational-3|computational-4|computational-5|computational-6|computational-n|computational-x|computational|compute|condition-value|condition|conditionally|configuration|console|constant|constrain|constraints|constructor|contains|content|continue|control-area|control|controls-uncropped|controls|conversion|convert|converting|copy-selection|copy|core-index|corr|corresponding|count|create|creating|crt-under|crt|csize|csp|currency|current-date|cursor-col|cursor-color|cursor-frame-width|cursor-row|cursor-x|cursor-y|cursor|custom-attribute|custom-print-template|cut-selection|cycle|cyl-index|cyl-overflow|dashed|data-columns|data-pointer|data-types|data|database-key-long|database-key|date-and-time|date-compiled|date-entry|date-record|date-written|date|day-and-time|day-of-week|day|dbclob-file|dbclob-locator|dbclob|dbcs|de|debug-contents|debug-item|debug-line|debug-name|debug-sub-1|debug-sub-2|debug-sub-3|debug|debugging|decimal-point|decimal|declaratives|declare|default-button|default-font|default|definition|delegate-id|delegate|delete-selection|delete|delimited|delimiter|depending|descending|descriptor|destination|destroy|detach|detail|dictionary|disable|disc|disjoining|disk|disp|display-1|display-columns|display-format|display-st|display|divide|divider-color|dividers|division|dli|dot-dash|dotted|double|down|drag-color|draw|drop-down|drop-list|drop|duplicates|dynamic|ebcdic|ec|echo|egcs|egi|eject|element|elementary|else|emi|empty-check|enable|enabled|encoding|encryption|end-accept|end-add|end-call|end-chain|end-color|end-compute|end-delegate|end-delete|end-display|end-divide|end-evaluate|end-if|end-invoke|end-json|end-modify|end-move|end-multiply|end-of-page|end-perform|end-read|end-receive|end-return|end-rewrite|end-search|end-set|end-start|end-string|end-subtract|end-sync|end-try|end-unstring|end-use|end-wait|end-write|end-xml|end|ending|engraved|ensure-visible|enter|entry-field|entry-reason|entry|enum-id|enum|environment|eol|eop|eos|equal|equals|erase|error|escape-button|escape|esi|evaluate|event-list|event-pointer|event|every|examine|exceeds|exception-object|exception-value|exception|excess-3|exclude-event-list|exclusive|exec|execute|exhibit|exit|expand|expands|extend|extended-search|extended|extension|external-form|external|externally-described-key|factory|false|fd|fh--fcd|fh--keydef|field|file-control|file-id|file-limit|file-limits|file-name|file-pos|file-prefix|file|fill-color|fill-color2|fill-percent|filler|final|finally|finish-reason|first|fixed-font|fixed-width|fixed|flat-buttons|flat|float-extended|float-long|float-short|float|floating|font|footing|for|foreground-color|foreground-colour|foreground|forever|format|frame|framed|free|from|full-height|full|function-id|function-pointer|function|generate|get|getter|giving|global|go-back|go-forward|go-home|go-search|go|goback|graphical|greater|grid|grip|group-usage|group-value|group|handle|has-children|heading-color|heading-divider-color|heading-font|heading|heavy|height-in-cells|height|help-cursor|help-id|hidden-data|high-color|high-value|high-values|high|highlight|horizontal|hot-track|hscroll-pos|hscroll|i-o-control|i-o|icon|id|identification|identified|if|ignore|ignoring|implements|in|independent|index|indexed|indexer-id|indexer|indic|indicate|indicator|indicators|inherited|inheriting|inherits|initial|initialize|initialized|initiate|input-output|input|inquire|insert-rows|insert|insertion-index|inspect|installation|instance|interface-id|interface|internal|into|intrinsic|invalid|invoke|invoked|is|item-bold|item-help|item-id|item-text|item-to-add|item-to-delete|item-to-empty|item-value|item|iterator-id|iterator|japanese|joined|joining|json-code|json|just|justified|kanji|kept|key-yy|key|keyboard|label-offset|label|large-font|last-row|last|layout-data|layout-manager|lc_all|lc_collate|lc_ctype|lc_currency|lc_messages|lc_monetary|lc_numeric|lc_time|leading-shift|leading|leave|left-justify|left-text|left|leftline|length-check|length|less|limit|limits|lin|linage-counter|linage|line-counter|line|lines-at-root|lines|link|linkage|list-box|list|lm-resize|local-storage|locale|lock-holding|lock|locking|long-date|long-varbinary|long-varchar|low-color|low-value|low-values|low|lower|lowered|lowlight|manual|mass-update|master-index|max-height|max-lines|max-progress|max-size|max-text|max-val|max-width|mdi-child|mdi-frame|medium-font|memory|menu|merge|message|messages|metaclass|method-id|method|min-height|min-lines|min-size|min-val|min-width|modal|mode|modeless|modified|modify|modules|monitor-pointer|more-labels|move|multiline|multiple|multiply|mutex-pointer|name|named|namespace-prefix|namespace|national-edited|national|native|navigate-url|nchar|nclob|negative|nested|net-event-list|new|newable|next-item|next|no-auto-default|no-autosel|no-box|no-cell-drag|no-close|no-dividers|no-echo|no-f4|no-focus|no-group-tab|no-key-letter|no-search|no-tab|no-updown|no|nominal|none|nonnumeric|normal|not|note|notify-change|notify-dblclick|notify-selchange|notify|nstd-reels|null|nulls|num-col-headings|num-row-headings|num-rows|number|numbers|numeric-edited|numeric-fill|numeric|o-fill|object-computer|object-id|object-reference|object-storage|object|occurs|of|off|ok-button|omitted|on|only|oostackptr|open|operator-id|operator|optional|options|or|order|organization|other|others|otherwise|output|overflow|overlap-left|overlap-top|overlapped|overline|override|packed-decimal|padding|page-counter|page-setup|page-size|page|paged|panel-index|panel-style|panel-text|panel-widths|paragraph|param|parameter|params|parent|parse|partial|password|paste-selection|perform|permanent|pf|ph|pic|picture|pixel|pixels|placement|plus|pointer|pop-up|pos|position-shift|position|positioning|positive|prefixing|present|previous|print-control|print-no-prompt|print-preview|print-switch|print|printer-1|printer|printing|prior|priority|private|procedure-pointer|procedure|procedures|proceed|process|processing|profile|program-id|program-pointer|program|progress|prompt|prop|properties|property-id|property|protected|prototype|public|purge|push-button|query-index|queue|quote|quotes|radio-button|raise|raised|raising|random|range|rd|read-only|read|readers|reading|ready|receive|record-data|record-overflow|record-position|record-to-add|record-to-delete|record|recording|records|recover|recovery|recursive|redefine|redefines|redefinition|reel|reference|references|refresh|region-color|relation|relative|release|reload|remainder|remarks|removal|renames|reorg-criteria|repeated|replace|replacing|report|reporting|reports|repository|required|reread|rerun|reserve|reset-grid|reset-list|reset-tabs|reset|resident|resizable|resource|restricted|result-set-locator|resume|retry|return-code|return-value|return|returning|reverse-video|reverse|reversed|rewind|rewrite|rf|rh|right-align|right-justify|right|rimmed|rollback|rolling|rounded|row-color-pattern|row-color|row-dividers|row-font|row-headings|row-protection|rowid|run|s01|s02|s03|s04|s05|same|save-as-no-prompt|save-as|screen|scroll-bar|scroll|sd|search-options|search-text|search|seconds|section|secure|security|seek|segment-limit|segment|select-all-selection|select-all|select|selection-index|selection-text|selective|self-act|self|selfclass|semaphore-pointer|send|sentence|separate|separation|sequence|sequential|serializable|service|set|setter|shading|shadow|sharing|shift-in|shift-out|short-date|show-lines|show-none|show-sel-always|sign|signed-int|signed-long|signed-short|signed|size|skip1|skip2|skip3|small-font|sort-control|sort-core-size|sort-file-size|sort-merge|sort-message|sort-mode-size|sort-option|sort-order|sort-return|sort-tape|sort-tapes|sort|source-computer|source|sources|space-fill|space|spaces|special-names|spinner|sql-bfile|sql-blob|sql-clob|sql-cursor|sql-nclob|sql-rowid|sql|square|standard-1|standard-2|standard-3|standard|start-x|start-y|start|starting|static-list|static|status-bar|status-text|status|step|stop-browser|stop|store|string|strong|style|sub-queue-1|sub-queue-2|sub-queue-3|subfile|subtract|subwindow|suffixing|sum|super|suppress|symbol|symbolic|sync|synchronized|sysin|sysipt|syslist|syslst|sysout|syspch|syspunch|system-default|system-info|system|tab-control|tab-to-add|tab-to-delete|tab|table|tally|tallying|tape|tapes|temporary|terminal-info|terminal|terminate|termination-value|test|text|than|then|thread-local-storage|thread-local|thread-pointer|thread|threads|through|thru|thumb-position|tiled-headings|time-of-day|time-out|time-record|time|timeout|times|timestamp-offset-record|timestamp-offset|timestamp-record|timestamp|title-bar|title-position|title|to|tool-bar|top|totaled|totaling|trace|track-area|track-limit|track-thumb|tracks|traditional-font|trailing-shift|trailing-sign|trailing|transaction|transform|transient|transparent-color|transparent|tree-view|true|try|type|typedef|ucs-4|unbounded|underline|underlined|undo|unequal|unframed|unit|units|universal|unlock|unsigned-int|unsigned-long|unsigned-short|unsigned|unsorted|unstring|until|up|update|updaters|upon|upper|upsi-0|upsi-1|upsi-2|upsi-3|upsi-4|upsi-5|upsi-6|upsi-7|usage|use-alt|use-return|use-tab|use|user-colors|user-default|user-gray|user-white|user|using|utf-16|utf-16be|utf-16le|utf-32be|utf-32le|utf-8|valid|validate|validating|value-format|value|values|valuetype-id|valuetype|varbinary|variable|variant|varying|vertical|very-heavy|virtual-width|visible|volatile|vpadding|vscroll-bar|vscroll-pos|vscroll|vtop|wait|web-browser|when-compiled|when|where|wide|width-in-cells|width|window|with|words|working-storage|wrap|write-only|write-verify|write|writers|writing|x|xml-code|xml-declaration|xml-event|xml-information|xml-namespace-prefix|xml-namespace|xml-nnamespace-prefix|xml-nnamespace|xml-ntext|xml-schema|xml-text|xml|y|yielding|yyyyddd|yyyymmdd|zero-fill|zero|zeroes|zeros|end-exec))([^0-9a-zA-Z_-])"
+        },
+        {
+            "name": "variable",
+            "match": "[0-9a-zA-Z#][0-9a-zA-Z-_]*"
+        },
+        {
+            "match": "[^\\s]+"
+        }
+    ],
+    "repository": {
+    }
+}

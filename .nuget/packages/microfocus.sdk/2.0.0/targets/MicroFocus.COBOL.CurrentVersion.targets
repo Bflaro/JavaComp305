@@ -1,0 +1,1337 @@
+<!--
+ *
+ * (C) Copyright 1984-2022 Micro Focus or one of its affiliates.
+ *
+-->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <PropertyGroup>
+        <MicroFocusNETBuildTasksAssembly Condition="'$(MicroFocusNETBuildTasksAssembly)' == ''">MicroFocus.COBOL.BuildTasks.dll</MicroFocusNETBuildTasksAssembly>
+    </PropertyGroup>
+
+    <UsingTask TaskName="MicroFocus.Cobol.BuildTasks.AssignExtraOutputs" AssemblyFile="$(MicroFocusNETBuildTasksAssembly)"/>
+    <UsingTask TaskName="MicroFocus.Cobol.BuildTasks.AssignNativeReferences" AssemblyFile="$(MicroFocusNETBuildTasksAssembly)"/>
+    <UsingTask TaskName="MicroFocus.Cobol.BuildTasks.AssignSourceTargetPaths" AssemblyFile="$(MicroFocusNETBuildTasksAssembly)"/>
+    <UsingTask TaskName="MicroFocus.Cobol.BuildTasks.Cobol" AssemblyFile="$(MicroFocusNETBuildTasksAssembly)"/>
+    <UsingTask TaskName="MicroFocus.Cobol.BuildTasks.COBOLError" AssemblyFile="$(MicroFocusNETBuildTasksAssembly)"/>
+    <UsingTask TaskName="MicroFocus.Cobol.BuildTasks.CobolLink" AssemblyFile="$(MicroFocusNETBuildTasksAssembly)"/>
+    <UsingTask TaskName="MicroFocus.Cobol.BuildTasks.CreateCobolManifestResourceName"  AssemblyFile="$(MicroFocusNETBuildTasksAssembly)"/>
+    <UsingTask TaskName="MicroFocus.Cobol.BuildTasks.RCTask" AssemblyFile="$(MicroFocusNETBuildTasksAssembly)" />
+    <UsingTask TaskName="MicroFocus.Cobol.BuildTasks.CleanRCTask" AssemblyFile="$(MicroFocusNETBuildTasksAssembly)" />
+    <UsingTask TaskName="MicroFocus.Cobol.BuildTasks.MFLibrary" AssemblyFile="$(MicroFocusNETBuildTasksAssembly)" />
+    <UsingTask TaskName="MicroFocus.Cobol.BuildTasks.FindGenericConfigFile" AssemblyFile="$(MicroFocusNETBuildTasksAssembly)" />
+    <UsingTask TaskName="MicroFocus.Cobol.BuildTasks.CreateESDeploymentPkg" AssemblyFile="$(MicroFocusNETBuildTasksAssembly)" />
+
+    <PropertyGroup>
+        <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+        <DefaultLanguageSourceExtension>.cbl</DefaultLanguageSourceExtension>
+        <Language>COBOL</Language>
+        <DefineCommonCapabilities Condition=" '$(DefineCommonCapabilities)' == '' ">true</DefineCommonCapabilities>
+        <Is64BitProcess Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture)' == 'x64'">True</Is64BitProcess>
+        <MFProductVersion Condition="$([MSBuild]::IsOSPlatform('Windows')) and '$(MSBuildRuntimeType)' == 'Full'">$([MSBuild]::GetRegistryValueFromView("HKEY_LOCAL_MACHINE\SOFTWARE\Micro Focus\Visual COBOL", "DefaultVersion", null, RegistryView.Registry64))</MFProductVersion>
+        <Is64BitOnlyProduct Condition="$([MSBuild]::IsOSPlatform('Windows')) and '$(MSBuildRuntimeType)' == 'Full'">$([MSBuild]::GetRegistryValueFromView("HKEY_LOCAL_MACHINE\SOFTWARE\Micro Focus\Visual COBOL\$(MFProductVersion)\COBOL\Environment", "COB64ONLY", null, RegistryView.Registry64))</Is64BitOnlyProduct>
+    </PropertyGroup>
+
+    <!-- Version of implicit runtime reference for .NET Core/Standard -->
+    <PropertyGroup>
+        <MicroFocusRuntimeImplicitPackageVersion Condition="$(MicroFocusRuntimeImplicitPackageVersion) == ''">3.*</MicroFocusRuntimeImplicitPackageVersion>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <!-- Enable incremental build by enable file tracking in tasks-->
+      <TrackFileAccess Condition="'$(TrackFileAccess)' == ''">true</TrackFileAccess>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <RelinkOnly Condition="'$(Relink)' != '' and '$(Relink)' != 'false'">true</RelinkOnly>
+      <Relink Condition="'$(Relink)' == ''">false</Relink>
+    </PropertyGroup>
+
+    <!-- $(AssemblyName) is required to have a value by MS.C.T. We assign it our generic $(OutputName) property -->
+    <PropertyGroup>
+        <AssemblyName Condition="'$(AssemblyName)'==''">$(OutputName)</AssemblyName>
+    </PropertyGroup>
+
+    <!-- $(ManagedCode) is a required property. We assign it the default value of true if not specified in the project -->
+    <PropertyGroup>
+        <ManagedCode Condition="'$(ManagedCode)'==''">true</ManagedCode>
+    </PropertyGroup>
+
+    <!-- $(CobolPlatform) is a required property. We assign it the default value 'MSIL' if not specified in the project -->
+    <PropertyGroup>
+        <CobolPlatform Condition="'$(CobolPlatform)'==''">MSIL</CobolPlatform>
+    </PropertyGroup>
+
+    <!-- Use the link output name if it has been set and it is an unmanaged configuration -->
+    <PropertyGroup>
+        <TargetName Condition="'$(ManagedCode)'!='true' and '$(NativeLinkOutputName)'!=''">$(NativeLinkOutputName)</TargetName>
+    </PropertyGroup>
+
+    <!-- Default .NET Core/Standard properties -->
+    <PropertyGroup Condition="$(UsingMicrosoftNETSDK) != ''">
+        <SourceFormat Condition="$(SourceFormat) == ''">Variable</SourceFormat>
+        <AppDesignerFolder Condition="$(AppDesignerFolder) == ''">Properties</AppDesignerFolder>
+        <!-- And AssemblyName is OutputName when set -->
+        <AssemblyName Condition="'$(OutputName)' != ''">$(OutputName)</AssemblyName>
+        <!-- default OutputName is the same as AssemblyName -->
+        <OutputName Condition="'$(OutputName)' == ''">$(AssemblyName)</OutputName>
+        <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <!-- Provide a facility to override UseHostCompilerIfAvailable-->
+        <UseHostCompilerIfAvailable Condition=" '$(UseHostCompilerIfAvailable)' == ''">true</UseHostCompilerIfAvailable>
+        <!-- Provide a facility to override OOInherit-->
+        <OOInherit Condition=" '$(OOInherit)' == ''">$(EnableOOInheritanceScan)</OOInherit>
+    </PropertyGroup>
+
+    <!-- Use the MFDependencyPaths property if the ProjectCopybookPaths property is not set. -->
+    <PropertyGroup>
+        <ProjectCopybookPaths Condition="'$(ProjectCopybookPaths)'=='' and '$(MFDependencyPaths)'!=''">$(MFDependencyPaths)</ProjectCopybookPaths>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <EAGenXmlRebuilt></EAGenXmlRebuilt>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <MPCompile Condition=" '$(MPCompile)' == '' ">false</MPCompile>
+      <MPCompileMaxNodes Condition=" '$(MPCompileMaxNodes)' == '' ">0</MPCompileMaxNodes>
+    </PropertyGroup>
+
+    <PropertyGroup>
+       <TargetRuntime Condition="'$(ManagedCode)' != 'true' and ('$(TargetRuntime)' == 'Managed' or '$(TargetRuntime)' == '')">Native</TargetRuntime>
+    </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageFilesAsLBR Condition="$(PackageFilesAs.Contains('LBR'))">true</PackageFilesAsLBR>
+    <PackageFilesAsCAR Condition="$(PackageFilesAs.Contains('CAR'))">true</PackageFilesAsCAR>
+  </PropertyGroup>
+
+    <!-- Compile selected target needs to run the prepareforrun target if there are any cobol compile items in the list. -->
+    <PropertyGroup>
+        <PrepareForRunNeeded></PrepareForRunNeeded>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <CobolErrorDependsOn>
+		  PopulateIntermediateData;
+		  CopyMultiOutputFilesToOutputDirectory;
+		  RemoveBuildStateFile
+		</CobolErrorDependsOn>
+    </PropertyGroup>
+	
+    <ItemGroup>
+        <DocFileItem Include="$(DocumentationFile)" Condition="'$(DocumentationFile)'!=''"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(_DebugSymbolsProduced)' == 'true' and '$(PdbFile)' != ''">
+        <_DebugSymbolsIntermediatePathTemporary Include="$(PdbFile)"/>
+        <!-- Add any missing .pdb extension, as the compiler does -->
+        <_DebugSymbolsIntermediatePath Include="@(_DebugSymbolsIntermediatePathTemporary->'%(RootDir)%(Directory)%(Filename).pdb')"/>
+    </ItemGroup>
+
+    <!-- Project Capabilities (.NET SDK projects) -->
+    <ItemGroup Condition="'$(ManagedCode)' != '' and '$(UsingMicrosoftNETSdk)' != '' and '$(DefineCommonCapabilities)' == 'true' ">
+       <ProjectCapability Include="
+                                   DeclaredSourceItems;
+                                   UserSourceItems;
+                                   ProjectReferences;
+                                   Publish;
+                                   COBOL;
+                                   Managed;
+                                   COBOLFolderPublish" />
+        
+       <ProjectCapability Include="
+                                   AssemblyReferences;
+                                   COMReferences" Condition="'$(ManagedCode)' != 'false'" />
+
+    </ItemGroup>
+
+    <!-- Implicitly defined reference to COBOL runtime -->
+    <ItemGroup Condition="'$(DisableImplicitCOBOLRuntime)' != 'true' and '$(DisableImplicitFrameworkReferences)' != 'true' and ('$(TargetFrameworkIdentifier)' == '.NETStandard' or '$(TargetFrameworkIdentifier)' == '.NETCoreApp')">
+        <PackageReference Include="MicroFocus.COBOL.Runtime" Version="$(MicroFocusRuntimeImplicitPackageVersion)" IsImplicitlyDefined="true" />
+    </ItemGroup>
+
+    <PropertyGroup>
+        <CoreCompileDependsOn Condition="'$(ManagedCode)'=='true'">
+          _ComputeNonExistentFileProperty;
+          ForceCoreCompile
+        </CoreCompileDependsOn>
+        <CoreCompileDependsOn Condition="'$(ManagedCode)'=='false'">
+          _ComputeNonExistentFileProperty;
+          AssignSourceTargetPaths;
+          CompileRCFiles;
+          ForceCoreCompile
+        </CoreCompileDependsOn>
+
+    </PropertyGroup>
+
+    <!--
+    The CreateManifestResourceNames target create the manifest resource names from the .RESX
+    files.
+
+        [IN]
+        @(EmbeddedResource) - The list of EmbeddedResource items that have been pre-processed to add metadata about resource type
+                              Expected Metadata "Type" can either be "Resx" or "Non-Resx"
+
+        [OUT]
+        @(EmbeddedResource) - EmbeddedResource items with metadata
+
+    For COBOL applications the transformation is like:
+
+        Resources1.resx => RootNamespace.Resources1 => Build into main assembly
+        SubFolder\Resources1.resx => RootNamespace.SubFolder.Resources1 => Build into main assembly
+        Resources1.fr.resx => RootNamespace.Resources1.fr => Build into satellite assembly
+        Resources1.notaculture.resx => RootNamespace.Resources1.notaculture => Build into main assembly
+
+    For other project systems, this transformation may be different.
+    -->
+    <PropertyGroup>
+        <CreateManifestResourceNamesDependsOn></CreateManifestResourceNamesDependsOn>
+    </PropertyGroup>
+    <Target
+        Name="CreateManifestResourceNames"
+        Condition="'@(EmbeddedResource)' != ''"
+        DependsOnTargets="$(CreateManifestResourceNamesDependsOn)"
+        >
+
+        <ItemGroup>
+            <_Temporary Remove="@(_Temporary)" />
+        </ItemGroup>
+
+        <!-- Create manifest names for culture and non-culture Resx files, and for non-culture Non-Resx resources -->
+        <CreateCobolManifestResourceName
+              ResourceFiles="@(EmbeddedResource)"
+              RootNamespace="$(RootNamespace)"
+              Condition="'%(EmbeddedResource.WithCulture)' == 'false' or '%(EmbeddedResource.Type)' == 'Resx'">
+
+            <Output TaskParameter="ResourceFilesWithManifestResourceNames" ItemName="_Temporary" />
+
+        </CreateCobolManifestResourceName>
+
+          <!-- Create manifest names for all culture non-resx resources -->
+        <CreateCobolManifestResourceName
+              ResourceFiles="@(EmbeddedResource)"
+              RootNamespace="$(RootNamespace)"
+              PrependCultureAsDirectory="false"
+              Condition="'%(EmbeddedResource.WithCulture)' == 'true' and '%(EmbeddedResource.Type)' == 'Non-Resx'">
+
+            <Output TaskParameter="ResourceFilesWithManifestResourceNames" ItemName="_Temporary" />
+
+        </CreateCobolManifestResourceName>
+
+        <ItemGroup>
+            <EmbeddedResource Remove="@(EmbeddedResource)" />
+            <EmbeddedResource Include="@(_Temporary)" />
+            <_Temporary Remove="@(_Temporary)" />
+        </ItemGroup>
+
+    </Target>
+
+    <!--
+         To allow for portability of projects the @(PInvokeReference) list does not specfiy the path to the .dll in the ItemSpec.
+         This target produces a list where the HintPath attribute is used to locate the references to be passed to the compiler. The
+         list is also used by some of the targets in MS.C.T, notably ClickOnce deployment.
+    -->
+    <Target Name="AssignNativeReferences">
+
+         <AssignNativeReferences
+             PInvokeReferences="@(PInvokeReference)"
+             Condition="'@(PInvokeReference)' != ''" >
+
+             <!-- List of P/Invoke references -->
+             <Output TaskParameter="ResolvedPInvokeReferences" ItemName="PInvokeReferences"/>
+             <!-- List of P/Invoke references to 'CopyLocal' -->
+             <Output TaskParameter="CopyLocalFiles" ItemName="ReferenceCopyLocalPaths"/>
+
+         </AssignNativeReferences>
+
+    </Target>
+
+    <Target
+        Name="Clean"
+        DependsOnTargets="$(CleanDependsOn)"
+        />
+
+  <Target
+        Name="CleanTLogFiles">
+        <RemoveDir Directories="$(IntermediateOutputPath)$(ProjectName).TrackingLogs"/>
+    </Target>
+  <Target
+        Name="CleanAnalysisFiles">
+        <RemoveDir Directories="$(IntermediateOutputPath)EAAnalysis_$(ProjectGuid.GetHashCode())"/>
+    </Target>
+
+    <Target
+        Name="CleanListingFiles">
+        <!-- There's no way of knowing the output LST files without running through the compiler so we make
+             the generalized assumption to delete all LST files that are in the project output directory. -->
+        <CreateItem Include="$(MSBuildProjectDirectory)\Listing\*.lst">
+            <Output TaskParameter="Include" ItemName="AllListFiles" />
+        </CreateItem>
+        <Delete Files="@(AllListFiles)" />
+    </Target>
+
+    <Target
+      Name="ForceCoreCompile"
+      Outputs="@(DummyCompileItem)">
+      <!-- The CoreCompile target is dependent on this target. Create a new item as input to CoreCompile to
+           trigger execution. Otherwise msbuild may not called CoreCompile if it thinks the outputs are newer
+           than the inputs. This may be an issue in scenarios where only a copybook has been modified.-->
+      <CreateItem Include="@ForceCompile@">
+        <Output TaskParameter="Include" ItemName="DummyCompileItem"/>
+      </CreateItem>
+    </Target>
+
+  <Target
+    Name="CopyIntermediateItemsToOutput"
+    Condition="'$(DebugSymbols)'=='true'"
+    AfterTargets="CopyFilesToOutputDirectory">
+
+        <ItemGroup Condition="'@(CobolDeleted)' != ''">
+            <CobolFilesDeleted Include="@(CobolDeleted)" Exclude="@(FirstModule);@(LinkModules);@(PdbFiles);@(DirectivesFiles);@(IntermediateIdyFiles);@(IntGntFiles)" />
+        </ItemGroup>
+
+        <CreateItem Include="$(IntermediateOutputPath)$(OutputName).*.idy" Condition="'@(IntermediateIdyFiles)' == '' and  '$(ManagedCode)' == 'true'">
+            <Output TaskParameter="Include" ItemName="IntermediateIdyFiles"/>
+            <Output TaskParameter="Include" ItemName="FileWrites"/>
+        </CreateItem>
+        <CreateItem Include="@(AssignedSourceTargetPaths->'$(IntermediateOutputPath)%(Filename).idy')" Condition="'@(IntermediateIdyFiles)' == '' and  '$(ManagedCode)' != 'true'">
+            <Output TaskParameter="Include" ItemName="IntermediateIdyFiles"/>
+            <Output TaskParameter="Include" ItemName="FileWrites"/>
+        </CreateItem>
+
+    <!-- Add any directives files to the FileWrites property to ensure $(CleanFile) is correct -->
+        <Message Text="Added directives files to FileWrites '@(DirectivesFiles)'"
+               	      Condition="'$(MSBuildTargetsVerbose)'=='true' and '@(DirectivesFiles)' != ''"/>
+        <ItemGroup Condition="'@(DirectivesFiles)' != ''">
+              <FileWrites Include="@(DirectivesFiles)" />
+        </ItemGroup>
+
+        <Message Text="Added intermediate idy files to FileWrites '@(IntermediateIdyFiles)'"
+               	      Condition="'$(MSBuildTargetsVerbose)'=='true' and '@(IntermediateIdyFiles)' != ''"/>
+        <ItemGroup Condition="'@(IntermediateIdyFiles)' != ''">
+              <FileWrites Include="@(IntermediateIdyFiles)" />
+        </ItemGroup>
+
+        <Message Text="IntermediateIdyFiles=@(IntermediateIdyFiles)" Condition="'$(MSBuildTargetsVerbose)'=='true'" />
+        <Copy
+            SourceFiles="@(IntermediateIdyFiles)"
+            DestinationFolder="$(OutDir)"
+            SkipUnchangedFiles="$(SkipCopyUnchangedFiles)"
+            OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+            Retries="$(CopyRetryCount)"
+            Condition="'@(IntermediateIdyFiles)'!='' and Exists(%(IntermediateIdyFiles.FullPath))" >
+            <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+        </Copy>
+
+        <ItemGroup Condition="'@(CobolFilesDeleted)' != ''">
+              <FileWrites Remove="@(CobolFilesDeleted)" />
+        </ItemGroup>
+  </Target>
+
+  <!-- Trigger an error if building on an unsupported product (currently this is when using 32-bit MSBuild on 64-bit only product)  -->
+  <Target Name="_CheckForUnsupportedProduct" BeforeTargets="_CheckForInvalidConfigurationAndPlatform">
+    <!-- If we're running MSBuild as a 32-bit process using the 64-bit only product, then we error as this is unsupported -->
+    <COBOLError Condition="'$(Is64BitProcess)' == '' and '$(Is64BitOnlyProduct)' != ''" ResourceName="No32bitOption" />
+  </Target>
+
+  <!--
+    Trigger an error if project targeting a lower version of .NET Core than 6.0.
+  -->
+  <Target Name="_CheckForUnsupportedCOBOLNETCoreVersion" BeforeTargets="_CheckForInvalidConfigurationAndPlatform;Restore;CollectPackageReferences">
+    <COBOLError Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' and '$(_TargetFrameworkVersionWithoutV)' &lt; '6.0'" ResourceName="UnsupportedNETCoreVersion" />
+  </Target>
+
+    <Target
+        Name="CoreCompile"
+        Inputs="$(MSBuildAllProjects);
+                @(Compile);
+                @(ManifestResourceWithNoCulture);
+                @(_CoreCompileResourceInputs);
+                $(ApplicationIcon);
+                $(AssemblyOriginatorKeyFile);
+                @(ManifestNonResxWithNoCultureOnDisk);
+                @(ReferencePath);
+                @(CompiledLicenseFile);
+                @(EmbeddedDocumentation);
+                $(Win32Resource);
+                $(Win32Manifest);
+                @(CustomAdditionalCompileInputs);
+                $(ApplicationManifest);
+                @(DummyCompileItem)"
+        Outputs="@(DocFileItem);
+                 @(IntermediateAssembly);
+                 $(NonExistentFile);
+                 @(CustomAdditionalCompileOutputs);
+                 $(AssignedLbrInter)"
+        DependsOnTargets="$(CoreCompileDependsOn)"
+    >
+
+        <PropertyGroup>
+            <TrackFileAccess Condition="'$(TrackFileAccess)' == ''">true</TrackFileAccess>
+            <NoCOBOLCompilerStandardLib Condition=" '$(NoCOBOLCompilerStandardLib)' == '' ">true</NoCOBOLCompilerStandardLib>
+        </PropertyGroup>
+
+        <!-- These properties have been defined by .NET Core SDK projects, so we must re-assign property names -->
+        <!-- When not using an SDK project we just map the old property names to the new. For SDK style projects we will use the new property names -->
+        <PropertyGroup Condition="'$(UsingMicrosoftNETSdk)' == ''">
+            <MFCompany>$(Company)</MFCompany>
+            <MFProduct>$(Product)</MFProduct>
+            <MFVersion>$(Version)</MFVersion>
+        </PropertyGroup>
+
+        <!-- Add any "automatic" compiler references that need to be resolved when NoCompilerStandardLib is set
+             but the user hasn't told us to not include standard references -->
+        <ItemGroup Condition=" '$(NoCOBOLCompilerStandardLib)' == 'true' and '$(NoStdLib)' != 'true' ">
+            <_ExplicitILReference Include="$(FrameworkPathOverride)\mscorlib.dll" />
+        </ItemGroup>
+
+    <!-- Make sure the tracker directory exists. -->
+        <MakeDir Directories="$(IntermediateOutputPath)$(ProjectName).TrackingLogs"
+             Condition="'$(TrackFileAccess)'=='true' and !($(MSBuildProjectFullPath.EndsWith('.tmp_proj')) or $(MSBuildProjectFullPath.EndsWith('_wpftmp.cblproj'))) "/>
+
+        <!-- Condition is to filter out the _CoreCompileResourceInputs so that it doesn't pass in culture resources to the compiler -->
+
+        <!-- TestCover can also be an environment variable, clear TestCover if it has an invalid value. -->
+        <PropertyGroup>
+            <TestCover Condition="$(TestCover) != 'True' and $(TestCover) != 'False'"></TestCover>
+            <IdyCollectionName Condition="$(TestCover) == 'True' and $(IdyCollectionName) == ''">$(MSBuildProjectName)</IdyCollectionName>
+        </PropertyGroup>
+
+        <!-- COBOLDir can also be an environment variable, clear COBOLDir if it has an invalid value. -->
+        <PropertyGroup>
+            <COBOLDir Condition="$(COBOLDir) != 'True' and $(COBOLDir) != 'False'"></COBOLDir>
+        </PropertyGroup>
+
+        <PropertyGroup>
+            <!-- If EAOnDemandCodeAnalysisRequest is not explicitly set, then determine it from the OnDemandRulesets property -->
+            <EAOnDemandCodeAnalysisRequest Condition="'$(EAOnDemandCodeAnalysisRequest)' == ''">false</EAOnDemandCodeAnalysisRequest>
+            <EAOnDemandCodeAnalysisRequest Condition="'$(EAOnDemandCodeAnalysisRequest)' == 'false' and ('$(OnDemandRulesets)'!='')">true</EAOnDemandCodeAnalysisRequest>
+        </PropertyGroup>
+
+        <!-- Based on CSharp targets, add a defines constant matching the current configuration
+             Maybe these should only be enabled to SDK style projects? -->
+        <PropertyGroup Condition="'$(DisableImplicitConfigurationDefines)' != 'true' and '$(UsingMicrosoftNETSDK)' != ''">
+            <ImplicitConfigurationDefine>$(Configuration.ToUpperInvariant())</ImplicitConfigurationDefine>
+            <ImplicitConfigurationDefine>$(ImplicitConfigurationDefine.Replace('-', '_'))</ImplicitConfigurationDefine>
+            <ImplicitConfigurationDefine>$(ImplicitConfigurationDefine.Replace('.', '_'))</ImplicitConfigurationDefine>
+            <!-- Add a prefix and suffix of "_" to the configuration name to avoid any potential conflicts with existing COBOL keywords. -->
+            <ImplicitConfigurationDefine Condition="!$(ImplicitConfigurationDefine.StartsWith('_'))">_$(ImplicitConfigurationDefine)</ImplicitConfigurationDefine>
+            <ImplicitConfigurationDefine Condition="!$(ImplicitConfigurationDefine.EndsWith('_'))">$(ImplicitConfigurationDefine)_</ImplicitConfigurationDefine>
+            <DefineConstants>$(DefineConstants);$(ImplicitConfigurationDefine)</DefineConstants>
+            <!-- Special handling for DEBUG. To maintain compatibility with existing code that makes use of
+                 System.Diagnostics.Debug methods, we also need to ensure that we define a DEBUG constant. -->
+            <DefineConstants Condition="'$(Configuration.ToUpperInvariant())' == 'DEBUG'">$(DefineConstants);DEBUG</DefineConstants>
+        </PropertyGroup>
+
+        <!-- For newer style SDK projects add implicit constants for the current framework name and framework version -->
+        <PropertyGroup Condition="'$(UsingMicrosoftNETSDK)' != ''">
+            <DefineConstants>$(DefineConstants);$(VersionlessImplicitFrameworkDefine);$(ImplicitFrameworkDefine);$(BackwardsCompatFrameworkDefine)</DefineConstants>
+        </PropertyGroup>
+
+        <PropertyGroup>
+            <DirectivesInComments Condition="$(DirectivesInComments) != 'true'">false</DirectivesInComments>
+        </PropertyGroup>
+
+        <Cobol
+            AdditionalDirectives="$(AdditionalDirectives)"
+            AssemblyName="$(AssemblyName)"
+            KeyContainer="$(KeyContainerName)"
+            KeyFile="$(KeyOriginatorFile)"
+            BuildingInsideVisualStudio="$(BuildingInsideVisualStudio)"
+            CICSECM="$(CICSECM)"
+            SkipCompilerExecution="$(SkipCompilerExecution)"
+            ECMWarningsAsErrors="$(ECMWarningsAsErrors)"
+            COBOLPlatform="$(COBOLPlatform)"
+            COBOLDir="$(COBOLDir)"
+            IdyCollectionName="$(IdyCollectionName)"
+            Company="$(MFCompany)"
+            CompileItems="$(CompileItems)"
+            ConfigurationCopybookPaths="$(ConfigurationCopybookPaths)"
+            Copyright="$(Copyright)"
+            Culture="$(Culture)"
+            Debugsymbols="$(DebugSymbols)"
+            DebugType="$(DebugType)"
+            DefineConstants="$(DefineConstants)"
+            DelaySign="$(DelaySign)"
+            Dialect="$(Dialect)"
+            Description="$(Description)"
+            DocumentationFile="$(DocumentationFile)"
+            ApplicationManifest="$(ApplicationManifest)"
+            NoWin32Manifest="$(NoWin32Manifest)"
+            EntryPoint="$(StartupObject)"
+            ExtraOutputsFile="$(ExtraOutputsFile)"
+            FileVersion="$(FileVersion)"
+            GenerateDirectivesFile="$(GenerateDirectivesFile)"
+            IMSAdditionalDirectives="$(IMSAdditionalDirectives)"
+            IMSDIBGroup="$(IMSDIBGroup)"
+            IMSDIBVersion="$(IMSDIBVersion)"
+            IMSECM="$(IMSECM)"
+            IntermediateOutputPath="$(IntermediateOutputPath)"
+            Listing="$(CobolListing)"
+            ManagedCode="$(ManagedCode)"
+            MaxError="$(MaxError)"
+            MSBuildProjectFullPath="$(MSBuildProjectFullPath)"
+            ManagedMSSApplication="$(ManagedMSSApplication)"
+            NativeReferences="@(PInvokeReferences)"
+            NETCoreOrNETStandard="$(_IsNETCoreOrNETStandard)"
+            NoStdLib="$(NoCOBOLCompilerStandardLib)"
+            OOInherit="$(OOInherit)"
+            OutputType="$(OutputType)"
+            OutputPath="$(OutDir)"
+            Optimize="$(Optimize)"
+            PlatformTarget="$(PlatformTarget)"
+            Pointer64="$(Pointer64)"
+            PreserveCase="$(PreserveCase)"
+            Product="$(MFProduct)"
+            InformationalVersion="$(InformationalVersion)"
+            Profile="$(Profile)"
+            ProjectCopybookPaths="$(ProjectCopybookPaths)"
+            ProjectGuid="$(ProjectGuid)"
+            References="@(ReferencePath);@(_ExplicitILReference)"
+            Imports="@(Import)"
+            Resources="@(_CoreCompileResourceInputs);@(CompiledLicenseFile)"
+            ResFiles="@(ResFiles)"
+            Verify="$(Verify)"
+            SmartLinkage="$(SmartLinkage)"
+            SmartNest="$(SmartNest)"
+            SmartRestrict="$(SmartRestrict)"
+            SmartSerial="$(SmartSerial)"
+            SmartTrim="$(SmartTrim)"
+            SmartAnnotate="$(SmartAnnotate)"
+            CutPrefix="$(CutPrefix)"
+            Sources="@(Compile)"
+            SourceFormat="$(SourceFormat)"
+            SourceTabStop="$(TabStop)"
+            SourceTargetPaths="@(AssignedSourceTargetPaths)"
+            SQLDirectives="$(SQLDirectives)"
+            TargetFrameworkVersion="$(TargetFrameworkVersion)"
+            TargetFrameworkMoniker="$(ILTargetFrameworkMoniker)"
+            TargetFrameworkMonikerDisplayName="$(ILTargetFrameworkMonikerDisplayName)"
+            TestCover="$(TestCover)"
+            Title="$(Title)"
+            Trademark="$(Trademark)"
+            TreatWarningsAsErrors="$(TreatWarningsAsErrors)"
+            UseInProcessCompiler="$(UseInProcessCompiler)"
+            Verbose="$(Verbose)"
+            Version="$(MFVersion)"
+            WarningLevel="$(WarningLevel)"
+            Win32Icon="$(ApplicationIcon)"
+            ContinueOnError="false"
+            LinkMultiDlls="$(LinkMultiDlls)"
+            NativeLinkDirectives="$(NativeLinkDirectives)"
+            AdditionalFiles="$(NativeLinkObjs);
+                             $(NativeLinkLibs)"
+            NativeIncludeSystemPrograms="$(NativeIncludeSystemPrograms)"
+            NativeLinkMapFile="$(NativeLinkMapFile)"
+            NativeLinkKeepFiles="$(NativeLinkKeepFiles)"
+            NativeGraphicalApplication="$(NativeGraphicalApplication)"
+            NativeLinkVerbose="$(NativeLinkVerbose)"
+            NativeLinkRTLStaticOrShared="$(NativeLinkRTLStaticOrShared)"
+            NativeLinkBindToCurrentRTS="$(NativeLinkBindToCurrentRTS)"
+            Relink="$(Relink)"
+
+            IsEAAvailable="$(IsEAAvailable)"
+            EAOnDemandCodeAnalysisRequest="$(EAOnDemandCodeAnalysisRequest)"
+            RunMicroFocusCodeAnalysisAfterBuild="$(RunMicroFocusCodeAnalysisAfterBuild)"
+            ActiveRulesets="$(ActiveRulesets)"
+
+            TrackerLogDirectory="$(IntermediateOutputPath)$(ProjectName).TrackingLogs"
+            TrackFileAccess="$(TrackFileAccess)"
+            CobolIgnoredDependencies="$(CobolIgnoredDependencies)"
+            Charset="$(Charset)"
+
+            Preprocessors = "$(Preprocessors)"
+            PreprocessorName = "$(PreprocessorName)"
+            PreprocessorPath = "$(PreprocessorPath)"
+            PreprocessorArgs = "$(PreprocessorArgs)"
+            AdditionalPreprocessors = "$(AdditionalPreprocessors)"
+            SupportAdditionalPreprocessors = "$(SupportAdditionalPreprocessors)"
+
+            MPCompile = "$(MPCompile)"
+            MPCompileMaxNodes = "$(MPCompileMaxNodes)"
+
+            UseIDEEnvironmentOnBuild="$(UseIDEEnvironmentOnBuild)"
+            IDEEnvironment="$(IDEEnvironment)"
+
+            UseManagedCompiler="$(UseManagedCompiler)"
+
+			DirectivesInComments="$(DirectivesInComments)"
+            >
+
+            <Output TaskParameter="FirstModule" ItemName="FirstModule" />
+            <Output TaskParameter="IntermediateIdyFiles" ItemName="IntermediateIdyFiles" />
+            <Output TaskParameter="LinkModules" ItemName="LinkModules" />
+            <Output TaskParameter="PdbFiles" ItemName="PdbFiles" />
+            <Output TaskParameter="ShouldLink" PropertyName="ShouldLink" />
+            <Output TaskParameter="DirectivesFiles" ItemName="DirectivesFiles" />
+            <Output TaskParameter="EAGenXmlRebuilt" PropertyName="EAGenXmlRebuilt" />
+            <Output TaskParameter="CobolDeleted" ItemName="CobolDeleted" />
+            <Output TaskParameter="IntGntFiles" ItemName="IntGntFiles" />
+
+            <Output TaskParameter="COBOLCommandLineArgs" ItemName="COBOLCommandLineArgs" />
+            <Output TaskParameter="COBCPY" ItemName="COBCPY" />
+
+        </Cobol>
+        <ItemGroup>
+               <_CoreCompileResourceInputs Remove="@(_CoreCompileResourceInputs)" />
+        </ItemGroup>
+
+        <!-- For MANAGED COBOL if no assemblies produced - remove the IntermediateAssembly itemgroup,
+        so that CopyFilesToOutputDirectory does not fail. -->
+        <ItemGroup Condition="($(ManagedCode) == 'true') And !Exists('@(IntermediateAssembly)')">
+               <IntermediateAssembly Remove="@(IntermediateAssembly)" />
+        </ItemGroup>
+
+        <!-- For NATIVE COBOL if no *.obj or *.res files produced - remove the IntermediateAssembly itemgroup,
+        so that CopyFilesToOutputDirectory does not fail. -->
+        <ItemGroup Condition="$(ManagedCode) == 'false'">
+               <IntermediateBinaries Include="$(IntermediateOutputPath)\*.obj" />
+               <IntermediateResources Include="$(IntermediateOutputPath)\*.res" />
+        </ItemGroup>
+
+        <ItemGroup Condition="$(ManagedCode) == 'false' And ( ('@(IntermediateBinaries)' == '' And '@(IntermediateResources)' == '') Or ('$(OutputType)' == 'IntGnt' And '$(PackageFilesAsLBR)' != 'true') )">
+               <IntermediateAssembly Remove="@(IntermediateAssembly)" />
+        </ItemGroup>
+        <OnError ExecuteTargets="$(CobolErrorDependsOn)"/>
+    </Target>
+
+    <Target
+        Name="PopulateIntermediateData"
+    >
+        <ItemGroup Condition="$(ManagedCode) == 'false'">
+               <IntermediateBinaries Include="$(IntermediateOutputPath)\*.obj" />
+               <IntermediateResources Include="$(IntermediateOutputPath)\*.res" />
+        </ItemGroup>
+    </Target>
+
+    <!-- Import design time targets before the common targets, which import targets from Nuget. This is for SDK style/CPS projects only -->
+    <PropertyGroup>
+       <COBOLDesignTimeTargetsPath Condition="'$(UsingMicrosoftNETSdk)' == 'true' and '$(COBOLDesignTimeTargetsPath)'==''">$(MSBuildThisFileDirectory)MicroFocus.COBOL.DesignTime.targets</COBOLDesignTimeTargetsPath>
+    </PropertyGroup>
+
+    <Import Project="$(COBOLDesignTimeTargetsPath)" Condition="'$(COBOLDesignTimeTargetsPath)' != '' and Exists('$(COBOLDesignTimeTargetsPath)')" /> 
+
+    <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+
+    <!-- Initialize compiler properties if asked to generate a target framework attribute (for applicable target projects) -->
+    <Target Name="_SetTargetFrameworkMonikerAttribute" BeforeTargets="GenerateTargetFrameworkMonikerAttribute">
+       <PropertyGroup Condition="'$(GenerateTargetFrameworkAttribute)' == 'true' and '$(ManagedCode)' == 'true' and '$(TargetFrameworkMoniker)' != '' and '$(TargetingClr2Framework)' != 'true'">
+           <ILTargetFrameworkMoniker>$(TargetFrameworkMoniker)</ILTargetFrameworkMoniker>
+           <ILTargetFrameworkMonikerDisplayName>$(TargetFrameworkMonikerDisplayName)</ILTargetFrameworkMonikerDisplayName>
+       </PropertyGroup>
+    </Target>
+
+    <!-- Override MicroSoft.Common.Targets to add AssignNativeReferences prior to ResolveNativeReferences -->
+    <PropertyGroup>
+        <ResolveReferencesDependsOn>
+            BeforeResolveReferences;
+            AssignProjectConfiguration;
+            ResolveProjectReferences;
+            AssignNativeReferences;
+            ResolveNativeReferences;
+            ResolveAssemblyReferences;
+            GenerateBindingRedirects;
+            ResolveComReferences;
+            AfterResolveReferences
+        </ResolveReferencesDependsOn>
+
+    </PropertyGroup>
+
+
+    <PropertyGroup>
+        <CleanDependsOn Condition="'$(ManagedCode)' == 'true' and '$(LinkMultiDlls)' == 'true'">
+            $(CleanDependsOn);
+            CleanTLogFiles;
+            CleanAnalysisFiles;
+            CleanListingFiles
+        </CleanDependsOn>
+        <CleanDependsOn Condition="'$(ManagedCode)' == 'true' and '$(LinkMultiDlls)' != 'true'">
+            $(CleanDependsOn);
+            CleanTLogFiles;
+            CleanListingFiles
+        </CleanDependsOn>
+        <CleanDependsOn Condition="'$(ManagedCode)' == 'false'">
+            $(CleanDependsOn);
+            CleanTLogFiles;
+            CleanAnalysisFiles;
+            CleanUnmanaged;
+            CleanListingFiles
+        </CleanDependsOn>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <CleanUnmanagedDependsOn>
+            AssignSourceTargetPaths;
+            AssignSourceXtraOut;
+            AssignExtraOutputsForClean;
+            CleanRCFiles
+        </CleanUnmanagedDependsOn>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <AssignSourceTargetPathsDependsOn/>
+    </PropertyGroup>
+
+    <Target
+        Name="AssignSourceTargetPaths"
+        DependsOnTargets="$(AssignSourceTargetPathsDependsOn)"
+        >
+
+        <AssignSourceTargetPaths
+            DebugSymbols="$(DebugSymbols)"
+            IntermediateOutputPath="$(IntermediateOutputPath)"
+            Optimize="$(Optimize)"
+            OutputPath="$(OutDir)"
+            OutputType="$(OutputType)"
+            Sources="@(Compile)">
+
+            <Output TaskParameter="TargetPaths" ItemName="AssignedSourceTargetPaths"/>
+
+        </AssignSourceTargetPaths>
+
+        <Message Text="(out) AssignSourceTargetPaths: AssignedSourceTargetPaths:'@(AssignedSourceTargetPaths)'"
+                 Condition="'$(MSBuildTargetsVerbose)'=='true'"/>
+
+    </Target>
+
+    <!--
+       Set the appropriate extension for a LinkMultiDll output project which, despite the name may now be multiple exes or multiple dlls.
+    -->
+    <PropertyGroup Condition="'$(LinkMultiDlls)'=='true' and '$(OutputType)' == 'Library'">
+        <MultiDllExtension>.dll</MultiDllExtension>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(LinkMultiDlls)'=='true' and '$(OutputType)' != 'Library'">
+        <MultiDllExtension>.exe</MultiDllExtension>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <AssignSourceXtraOutDependsOn>AssignSourceTargetPaths</AssignSourceXtraOutDependsOn>
+    </PropertyGroup>
+
+    <Target
+        Name="AssignSourceXtraOut"
+        DependsOnTargets="$(AssignSourceXtraOutDependsOn)"
+        >
+        <CreateItem Include="@(AssignedSourceTargetPaths->'$(IntermediateOutputPath)%(Filename).xtraout')">
+            <Output TaskParameter="Include" ItemName="AssignedSourceXtraOut"/>
+        </CreateItem>
+
+        <Message Text="(out) AssignSourceXtraOut: AssignedSourceXtraOut:'@(AssignedSourceXtraOut)'"
+                 Condition="'$(MSBuildTargetsVerbose)'=='true'"/>
+
+    </Target>
+
+    <!--
+      Prior to the multi-proc build support this was the name of the ExtraOutputs file. Retain the property
+      so that a Clean will remove it if it still exists.
+     -->
+    <PropertyGroup>
+        <OldExtraOutputsFile>$(IntermediateOutputPath)ExtraOutputs.xml</OldExtraOutputsFile>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <ExtraOutputsFile>$(IntermediateOutputPath)$(ProjectName).ExtraOutputs.xml</ExtraOutputsFile>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <AssignExtraOutputsDependsOn/>
+    </PropertyGroup>
+
+    <Target
+        Name="AssignExtraOutputs"
+        DependsOnTargets="$(AssignExtraOutputsDependsOn)"
+        Condition="Exists('$(ExtraOutputsFile)')">
+
+        <AssignExtraOutputs ExtraOutputsFile="$(ExtraOutputsFile)">
+            <Output TaskParameter="ExtraOutputs" ItemName="ExtraOutputs"/>
+        </AssignExtraOutputs>
+
+        <Message Text="(out) AssignExtraOutputs: paths:'@(ExtraOutputs)'" Condition="'$(MSBuildTargetsVerbose)'=='true'"/>
+
+    </Target>
+
+    <Target
+        Name="AssignExtraOutputsForClean"
+        DependsOnTargets="$(AssignExtraOutputsDependsOn)"
+        Condition="Exists('$(ExtraOutputsFile)')">
+
+        <AssignExtraOutputs ExtraOutputsFile="$(ExtraOutputsFile)">
+            <Output TaskParameter="ExtraOutputs" ItemName="ExtraOutputsForClean"/>
+        </AssignExtraOutputs>
+
+        <Message Text="(out) AssignExtraOutputsForClean: paths:'@(ExtraOutputsForClean)'" Condition="'$(MSBuildTargetsVerbose)'=='true'"/>
+
+    </Target>
+
+    <!--
+       Treat any objs in the intermediate directory as an intermediate file for INT and GNT programs. This ensures that any objs left over from
+       a previous output type do not cause a build fail.
+    -->
+
+    <Target
+        Name="AssignLbrInter"
+        Condition="'$(PackageFilesAsLBR)' == 'true'"
+        DependsOnTargets="$(AssignLbrInterDependsOn)"
+        >
+        <CreateItem Include="$(IntermediateOutputPath)$(TargetName).lbr">
+            <Output TaskParameter="Include" ItemName="AssignedLbrInter"/>
+        </CreateItem>
+
+        <Message Text="(out) AssignLbrInter: AssignedLbrInter:'@(AssignedLbrInter)'"
+                 Condition="'$(MSBuildTargetsVerbose)'=='true'"/>
+    </Target>
+
+    <PropertyGroup>
+        <AssignLbrOutputDependsOn>AssignSourceTargetPaths</AssignLbrOutputDependsOn>
+    </PropertyGroup>
+
+    <Target
+        Name="AssignLbrOutput"
+        Condition="'$(PackageFilesAsLBR)' == 'true'"
+        DependsOnTargets="$(AssignLbrOutputDependsOn)"
+        >
+        <CreateItem Include="$(OutDir)$(TargetName).lbr">
+            <Output TaskParameter="Include" ItemName="AssignedLbrOutput"/>
+        </CreateItem>
+
+        <Message Text="(out) AssignLbrOutput: AssignedLbrOutput:'@(AssignedLbrOutput)'"
+                 Condition="'$(MSBuildTargetsVerbose)'=='true'"/>
+    </Target>
+
+    <Target
+        Name="CleanUnmanaged"
+        DependsOnTargets="$(CleanUnmanagedDependsOn)">
+
+        <Delete Condition="'$(OutputType)'!='IntGnt'" Files="$(OutDir)$(TargetName)$(TargetExt)"/>
+        <Delete Condition="'@(AssignedSourceTargetPaths)'!=''" Files="@(AssignedSourceTargetPaths)"/>
+        <Delete Condition="'@(AssignedSourceXtraOut)'!=''" Files="@(AssignedSourceXtraOut)"/>
+        <Delete Condition="'@(ExtraOutputsForClean)'!=''" Files="@(ExtraOutputsForClean)"/>
+        <Delete Condition="'$(ExtraOutputsFile)'!=''" Files="$(ExtraOutputsFile)"/>
+        <Delete Condition="'$(OldExtraOutputsFile)'!=''" Files="$(OldExtraOutputsFile)"/>
+
+    </Target>
+
+    <Target Name="Linker"
+            Condition="$(ShouldLink) != False"
+            >
+        <!-- Do not call link if compiling a background parse -->
+        <CallTarget Condition="'$(BuildingProject)' == 'true'"
+                Targets="Link" />
+        <CallTarget Condition="'$(BuildingProject)' == 'true'"
+                Targets="CreateMFLibrary" />
+        <CallTarget Condition="'$(BuildingProject)' == 'true'"
+                Targets="CopyGenericConfigFile" />
+    </Target>
+
+    <!--
+         Previously the collection of files referenced in this task was passed as Input to the Link task
+         but as we need to also check external files passed in the AdditionalFiles they are no longer
+         Input parameters to ensure that the task gets executed. However, we still check the collection
+         in case it is empty, in which case the Link task can be skipped.
+    -->
+    <Target Name="AssignLinkerInputs">
+        <CreateItem Include="@(AssignedSourceTargetPaths);
+                   @(ExtraOutputs);
+                   @(AdditionalLibraryFiles);
+                   @(ResFiles);
+                   @(NativeAppManifest)">
+            <Output TaskParameter="Include" ItemName="LinkerInputs"/>
+        </CreateItem>
+    </Target>
+
+
+    <!--
+        The link target builds the DLL or EXE
+    -->
+    <PropertyGroup>
+        <LinkDependsOn>
+            AssignSourceTargetPaths;
+            AssignExtraOutputs;
+            GetNativeAppManifest;
+            AssignLinkerInputs;
+        </LinkDependsOn>
+    </PropertyGroup>
+
+    <Target
+        Condition=" '$(OutputType)'!='IntGnt' and '$(LinkMultiDlls)'!='true' and '$(CompileItems)'==''"
+        Name="Link"
+        DependsOnTargets="$(LinkDependsOn)">
+
+        <PropertyGroup>
+            <TrackFileAccess Condition="'$(TrackFileAccess)' == ''">true</TrackFileAccess>
+        </PropertyGroup>
+
+        <CobolLink Condition="'@(LinkerInputs)' != '' or '$(Relink)' == 'true' "
+
+            NativeLinkRTLStaticOrShared="$(NativeLinkRTLStaticOrShared)"
+            NativeLinkBindToCurrentRTS="$(NativeLinkBindToCurrentRTS)"
+            NativeLinkThreadingType="$(NativeLinkThreadingType)"
+            NativeLinkLevel="$(NativeLinkLevel)"
+            NativeLinkDirectives="$(NativeLinkDirectives)"
+            NativeIncludeSystemPrograms="$(NativeIncludeSystemPrograms)"
+            NativeLinkMapFile="$(NativeLinkMapFile)"
+            NativeLinkKeepFiles="$(NativeLinkKeepFiles)"
+            NativeLinkEntryPoint="$(NativeLinkEntryPoint)"
+            NativeLinkOutputName="$(NativeLinkOutputName)"
+
+            BuildingInsideVisualStudio="$(BuildingInsideVisualStudio)"
+            DebugSymbols="$(DebugSymbols)"
+            NativeGraphicalApplication="$(NativeGraphicalApplication)"
+            EntryPoint="$(StartupObject)"
+            Files="@(LinkerInputs)"
+            AdditionalFiles="$(NativeLinkObjs);
+                             $(NativeLinkLibs)"
+            IntermediateOutputPath="$(IntermediateOutputPath)"
+            OutputName="$(TargetName)$(TargetExt)"
+            OutputPath="$(OutDir)"
+            OutputType="$(OutputType)"
+            NativeLinkVerbose="$(NativeLinkVerbose)"
+            PlatformTarget="$(PlatformTarget)"
+            Relink="$(Relink)"
+
+            TrackerLogDirectory="$(IntermediateOutputPath)$(ProjectName).TrackingLogs"
+            TrackFileAccess="$(TrackFileAccess)"
+
+            UseIDEEnvironmentOnBuild="$(UseIDEEnvironmentOnBuild)"
+            IDEEnvironment="$(IDEEnvironment)"
+            >
+        </CobolLink>
+      <!--Rts="$(Rts)"-->
+    </Target>
+
+    <!--
+        The CreateMFLibrary target builds an lbr.
+
+        Note that files whose Build Action is set to Content are included to allow items such as DS screensets to be built into the .lbr
+    -->
+    <PropertyGroup>
+        <LbrDependsOn>
+            AssignSourceTargetPaths;
+            AssignExtraOutputs;
+        </LbrDependsOn>
+    </PropertyGroup>
+
+    <Target
+        Condition="'$(CompileItems)'==''  and '$(OutputType)'=='IntGnt' and '$(PackageFilesAsLBR)' == 'true'"
+        Name="CreateMFLibrary"
+        Inputs="@(AssignedSourceTargetPaths);
+                @(Content);
+                @(ExtraOutputs)"
+        Outputs="$(IntermediateOutputPath)$(TargetName).lbr"
+        DependsOnTargets="$(LbrDependsOn)">
+
+        <MFLibrary
+
+            BuildingInsideVisualStudio="$(BuildingInsideVisualStudio)"
+            Files="@(AssignedSourceTargetPaths);
+                   @(Content);
+                   @(ExtraOutputs)"
+            IntermediateOutputPath="$(IntermediateOutputPath)"
+            OutputName="$(TargetName)"
+            OutputPath="$(OutDir)"
+            OutputType="$(OutputType)"
+            PlatformTarget="$(PlatformTarget)">
+
+         </MFLibrary>
+
+         <ItemGroup>
+             <FileWrites Include="@(IntGntFiles)"/>
+         </ItemGroup>
+
+         <!-- Update the IntermediateAssembly property to ensure that the library gets copied to the output folder -->
+         <ItemGroup>
+              <IntermediateAssembly Remove="@(IntermediateAssembly)" />
+              <IntermediateAssembly Include="$(IntermediateOutputPath)$(TargetName).lbr" />
+              <FileWrites Include="$(IntermediateOutputPath)$(TargetName).lbt" />
+         </ItemGroup>
+
+    </Target>
+
+  <!-- Create the ES deployment package ie the .car file -->
+    <Target
+      Condition="'$(BuildingProject)' == 'true' and '$(CompileItems)'=='' and '$(PackageFilesAsCAR)' == 'true'"
+      Name="CreateESPackage"
+      AfterTargets="CopyFilesToOutputDirectory;CopyMultiOutputFilesToOutputDirectory"
+      >
+
+    <ItemGroup>
+        <ServiceFiles Include="@(None);@(Content)" Condition="'%(Extension)' == '.svi'"/>
+    </ItemGroup>
+    <CreateESDeploymentPkg 
+         PlatformTarget="$(PlatformTarget)"
+         MSBuildProjectFullPath="$(MSBuildProjectFullPath)"
+         IntermediateOutputPath="$(IntermediateOutputPath)"
+         OutputPath="$(OutDir)"
+         Items="@(ServiceFiles)">
+             <Output TaskParameter="PackageNames" ItemName="CreatedPackageNames"/>
+    </CreateESDeploymentPkg>
+
+    <Copy
+      SourceFiles="@(CreatedPackageNames)"
+      DestinationFolder="$(OutDir)"
+      SkipUnchangedFiles="$(SkipCopyUnchangedFiles)"
+      OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+      Retries="$(CopyRetryCount)"
+      RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+      UseHardlinksIfPossible="$(CreateHardLinksForCopyFilesToOutputDirectoryIfPossible)"
+      Condition="'@(CreatedPackageNames)' != ''">
+      <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+     </Copy>
+
+  </Target>
+
+  <Target
+        Name="GetGenericConfig"
+        Condition="'$(ManagedCode)' == 'false' and ('$(OutputType)' == 'Exe' or '$(OutputType)' == 'WinExe') and '$(LinkMultiDlls)' != 'true' ">
+        <!-- Get the generic config file name -->
+        <ItemGroup>
+          <GenericConfigWithTargetPath Include="$(GenericConfig)" Condition="'$(GenericConfig)'!=''">
+            <TargetPath>$(TargetFileName).mfgcf</TargetPath>
+          </GenericConfigWithTargetPath>
+        </ItemGroup>
+
+        <FindGenericConfigFile PrimaryList="@(None)" SecondaryList="@(Content)" TargetPath="$(TargetFileName).mfgcf" Condition="'$(GenericConfig)'==''">
+          <Output TaskParameter="GenericConfigFile" ItemName="GenericConfigWithTargetPath"/>
+          <Output TaskParameter="GenericConfigFile" PropertyName="GenericConfig"/>
+        </FindGenericConfigFile>
+    </Target>
+
+    <!--
+        Check whether the Native project contains any manifest files. If it does, add to the files passed to CBLLINK.
+        Note that doing this should not affect any projects already specifying the manifest as an additional directive
+        as CBLLINK strips out duplicates.
+    -->
+    <Target Name="GetNativeAppManifest"
+        Condition="'$(ManagedCode)' == 'false' and ('$(OutputType)' == 'Exe' or '$(OutputType)' == 'WinExe') and '$(LinkMultiDlls)' != 'true' ">
+        <ItemGroup>
+           <NativeManifestFiles Include="@(None);@(Content)" Condition="'%(Extension)' == '.manifest'"/>
+        </ItemGroup>
+        <CreateItem Include="@(NativeManifestFiles)">
+          <Output TaskParameter="Include" ItemName="NativeAppManifest"/>
+        </CreateItem>
+    </Target>
+
+    <PropertyGroup>
+        <CompileDependsOn Condition="'$(ManagedCode)' == 'false'">
+            ResolveReferences;
+            ResolveKeySource;
+            GetGenericConfig;
+            BeforeCompile;
+            _TimeStampBeforeCompile;
+            CoreCompile;
+            Linker;
+            _TimeStampAfterCompile;
+            AfterCompile;
+        </CompileDependsOn>
+    </PropertyGroup>
+
+    <!--The $(BuildingProject) = true indicates that this is not a background parse, but a normal build.
+        The CompileRCFiles target should not be invoked during a build that is part of a background parse.-->
+    <Target
+      Name="CompileRCFiles"
+      Condition="'@(ResourceCompile)' != '' and $(BuildingProject)=='true'">
+
+      <Message Text="Resource Compile" Condition="'$(MSBuildTargetsVerbose)'=='true'"/>
+
+      <RCTask Inputs="@(ResourceCompile)"
+              IntermediateOutputPath="$(IntermediateOutputPath)"
+              MSBuildProjectFullPath="$(MSBuildProjectFullPath)"
+              PlatformTarget="$(PlatformTarget)"
+              UseIDEEnvironmentOnBuild="$(UseIDEEnvironmentOnBuild)"
+              IDEEnvironment="$(IDEEnvironment)"
+              >
+
+        <Output TaskParameter="ResFiles" ItemName="ResFiles"/>
+      </RCTask>
+
+      <Message Text="Resource Compile Complete" Condition="'$(MSBuildTargetsVerbose)'=='true'"/>
+
+    </Target>
+
+
+    <Target
+         Name="CleanRCFiles"
+         Condition="'@(ResourceCompile)' != ''">
+
+      <Message Text="Cleaning up compiled resource files" Condition="'$(MSBuildTargetsVerbose)'=='true'"/>
+
+      <CleanRCTask Inputs="@(ResourceCompile)"
+          IntermediateOutputPath="$(IntermediateOutputPath)"
+          />
+
+      <Message Text="Cleaning compiled resource files completed" Condition="'$(MSBuildTargetsVerbose)'=='true'"/>
+
+    </Target>
+    <PropertyGroup>
+        <CompileCblFileTargets>
+            BuildOnlySettings;
+            PrepareForBuild;
+            Compile;
+        </CompileCblFileTargets>
+    </PropertyGroup>
+
+    <Target Name="CompileSelected" DependsOnTargets="$(CompileSelectedDependsOn)">
+        <PropertyGroup>
+            <PrepareForRunNeeded Condition="'$(PrepareForRunNeeded)'=='' and '$(CompileItems)'!=''">true</PrepareForRunNeeded>
+        </PropertyGroup>
+        <CallTarget Condition="'$(CompileItems)' != ''" Targets="$(CompileCblFileTargets)" RunEachTargetSeparately="true" />
+        <CallTarget Condition="'$(LinkMultiDlls)'=='true' And '$(PrepareForRunNeeded)' == 'true'" Targets="PrepareForRun" />
+        <CallTarget Condition="'$(OutputType)' == 'IntGnt' And '$(PackageFilesAsLBR)' != 'true' And '$(PrepareForRunNeeded)' == 'true'" Targets="PrepareForRun" />
+        <CallTarget Targets="IncrementalClean" />
+    </Target>
+
+    <Target Name="AfterCompileMultiOutput" Condition="'$(ManagedCode)' == 'true' and '$(LinkMultiDlls)' == 'true'" BeforeTargets="AfterCompile">
+
+        <ItemGroup>
+            <FileWrites Include="@(FirstModule)"/>
+            <FileWrites Include="@(LinkModules)"/>
+            <FileWrites Include="@(PdbFiles)"/>
+            <FileWrites Include="@(IntermediateBinaries)"/>
+            <FileWrites Include="@(IntGntFiles)" Condition="'$(OutputType)' == 'IntGnt'"/>
+        </ItemGroup>
+
+    </Target>
+
+    <PropertyGroup>
+        <PrepareForRunDependsOn Condition="'$(LinkMultiDlls)'=='true'">
+              CopyMultiOutputFilesToOutputDirectory;
+        </PrepareForRunDependsOn>
+        <PrepareForRunDependsOn Condition="'$(OutputType)' == 'IntGnt' And '$(PackageFilesAsLBR)' != 'true'">
+              CopyMultiOutputFilesToOutputDirectory;
+        </PrepareForRunDependsOn>
+    </PropertyGroup>
+
+    <Target Name="CopyMultiOutputFilesToOutputDirectory"
+            Condition="'$(LinkMultiDlls)'=='true' Or ('$(OutputType)' == 'IntGnt' And '$(PackageFilesAsLBR)' != 'true')"
+            DependsOnTargets="
+                _CopyFilesMarkedCopyLocal;
+                _CopySourceItemsToOutputDirectory;
+                _CheckForCompileOutputs;
+                CopyIntermediateItemsToOutput" >
+
+        <PropertyGroup>
+          <!-- By default we're not using Hard Links to copy to the output directory, and never when building in VS -->
+          <CreateHardLinksForCopyFilesToOutputDirectoryIfPossible Condition="'$(BuildingInsideVisualStudio)' == 'true' or '$(CreateHardLinksForCopyFilesToOutputDirectoryIfPossible)' == ''">false</CreateHardLinksForCopyFilesToOutputDirectoryIfPossible>
+        </PropertyGroup>
+
+        <PropertyGroup>
+          <CopyBuildOutputToOutputDirectory Condition="'$(CopyBuildOutputToOutputDirectory)'==''">true</CopyBuildOutputToOutputDirectory>
+          <CopyOutputSymbolsToOutputDirectory Condition="'$(CopyOutputSymbolsToOutputDirectory)'==''">true</CopyOutputSymbolsToOutputDirectory>
+        </PropertyGroup>
+
+        <ItemGroup>
+            <FileWrites Include="@(FirstModule)"/>
+            <FileWrites Include="@(LinkModules)"/>
+            <FileWrites Include="@(PdbFiles)"/>
+            <FileWrites Include="@(IntermediateBinaries)"/>
+            <FileWrites Include="@(IntGntFiles)" Condition="'$(OutputType)' == 'IntGnt'"/>
+        </ItemGroup>
+
+        <!-- Copy the build product (.dll or .exe). -->
+        <Copy
+            SourceFiles="@(FirstModule)"
+            DestinationFolder="$(OutDir)"
+            SkipUnchangedFiles="$(SkipCopyUnchangedFiles)"
+            OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+            Retries="$(CopyRetryCount)"
+            RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+            UseHardlinksIfPossible="$(CreateHardLinksForCopyFilesToOutputDirectoryIfPossible)"
+            Condition="'@(FirstModule)' != '' and '$(CopyBuildOutputToOutputDirectory)'=='true'"	>
+          <Output TaskParameter="DestinationFiles" ItemName="MainAssembly"/>
+          <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+        </Copy>
+
+        <!-- Copy the additional modules. -->
+        <Copy
+            SourceFiles="@(LinkModules)"
+            DestinationFolder="$(OutDir)"
+            SkipUnchangedFiles="$(SkipCopyUnchangedFiles)"
+            OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+            Retries="$(CopyRetryCount)"
+            RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+            UseHardlinksIfPossible="$(CreateHardLinksForCopyAdditionalFilesIfPossible)"
+            Condition="'@(LinkModules)' != '' and '$(CopyBuildOutputToOutputDirectory)'=='true'"				>
+          <Output TaskParameter="DestinationFiles" ItemName="AdditionalAssemblies"/>
+          <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+        </Copy>
+
+        <!-- Copy the int/gnt modules. -->
+        <Copy
+            SourceFiles="@(IntGntFiles)"
+            DestinationFolder="$(OutDir)"
+            SkipUnchangedFiles="$(SkipCopyUnchangedFiles)"
+            OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+            Retries="$(CopyRetryCount)"
+            RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+            UseHardlinksIfPossible="$(CreateHardLinksForCopyAdditionalFilesIfPossible)"
+            Condition="'$(OutputType)' == 'IntGnt'" >
+          <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+        </Copy>
+
+        <!-- Output the list of copied modules -->
+        <ItemGroup>
+            <MultiOutputCopiedFiles Include="@(MainAssembly)"/>
+            <MultiOutputCopiedFiles Include="@(AdditionalAssemblies)"/>
+            <MultiOutputTarget Include="$(OutDir)"/>
+        </ItemGroup>
+        <Message Text="$(ProjectName) -> @(MultiOutputTarget -> '%(FullPath)')" Importance="high"/>
+        <Message Text="Successfully built modules -> @(MultiOutputCopiedFiles)" Importance="normal" />
+
+        <!-- Copy the debug files. -->
+        <Copy
+            SourceFiles="@(PdbFiles)"
+            DestinationFolder="$(OutDir)"
+            SkipUnchangedFiles="$(SkipCopyUnchangedFiles)"
+            OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+            Retries="$(CopyRetryCount)"
+            RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+            UseHardlinksIfPossible="$(CreateHardLinksForCopyAdditionalFilesIfPossible)"
+            Condition="'@(PdbFiles)' != '' and '$(CopyOutputSymbolsToOutputDirectory)'=='true'"				>
+          <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+        </Copy>
+
+        <!--
+            Copy COM reference wrappers, isolated COM references, COM references included by
+            native (manifest) references, native (manifest) reference files themselves.
+        -->
+        <Copy
+            SourceFiles="@(ReferenceComWrappersToCopyLocal); @(ResolvedIsolatedComModules); @(_DeploymentLooseManifestFile); @(NativeReferenceFile)"
+            DestinationFolder="$(OutDir)"
+            SkipUnchangedFiles="$(SkipCopyUnchangedFiles)"
+            OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+            Retries="$(CopyRetryCount)"
+            RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+            UseHardlinksIfPossible="$(CreateHardLinksForCopyAdditionalFilesIfPossible)"
+            Condition="'@(ReferenceComWrappersToCopyLocal)' != '' or '@(ResolvedIsolatedComModules)' != '' or '@(_DeploymentLooseManifestFile)' != '' or '@(NativeReferenceFile)' != '' "
+        >
+
+          <Output TaskParameter="DestinationFiles" ItemName="FileWritesShareable"/>
+
+        </Copy>
+
+    </Target>
+
+    <!--
+      CopyGenericConfigFile : Copy the application config file for native executables only.
+      Based on the code used for the managed .config files in Microsoft.Common.targets
+      -->
+    <Target
+        Name="CopyGenericConfigFile"
+        Condition="'$(ManagedCode)' == 'false' and ('$(OutputType)' == 'Exe' or '$(OutputType)' == 'WinExe') and '$(LinkMultiDlls)' != 'true' "
+        Inputs="@(GenericConfigWithTargetPath)"
+        Outputs="@(GenericConfigWithTargetPath->'$(OutDir)%(TargetPath)')">
+
+        <!--
+          Copy the application's .config file, if any.
+          Not using SkipUnchangedFiles="true" because the application may want to change
+          the application.config and not have an incremental build replace it.
+          -->
+      <Copy
+          SourceFiles="@(GenericConfigWithTargetPath)"
+          DestinationFiles="@(GenericConfigWithTargetPath->'$(OutDir)%(TargetPath)')"
+          OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+          Retries="$(CopyRetryCount)"
+          RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+          UseHardlinksIfPossible="$(CreateHardLinksForAdditionalFilesIfPossible)">
+
+        <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+      </Copy>
+    </Target>
+
+    <Target Name="AddDirsToCurrentFileWrites" Condition="'$(ManagedCode)' == 'true' and '$(GenerateDirectivesFile)' == 'true'" BeforeTargets="IncrementalClean">
+        <CreateItem Include="$(OutDir)\*.dir">
+            <Output TaskParameter="Include" ItemName="AllDirFiles" />
+        </CreateItem>
+        <ConvertToAbsolutePath Paths="@(AllDirFiles)">
+            <Output TaskParameter="AbsolutePaths" ItemName="DirAbsPath"/>
+        </ConvertToAbsolutePath>
+
+        <ItemGroup>
+            <_CleanCurrentFileWrites Include="@(DirAbsPath)" />
+            <_CleanPriorFileWrites Remove="@(DirAbsPath)" />
+        </ItemGroup>
+        <Message Text="_CleanCurrentFileWrites='@(_CleanCurrentFileWrites)'" Condition="'$(MSBuildTargetsVerbose)'=='true'" />
+        <Message Text="DirectivesFiles='@(DirAbsPath)'" Condition="'$(MSBuildTargetsVerbose)'=='true'" />
+    </Target>
+
+    <Target Name="AddIntGntsToCurrentFileWrites" Condition="'$(OutputType)' == 'IntGnt'" BeforeTargets="IncrementalClean">
+        <ItemGroup>
+            <ExistingIntFiles Include="@(_CleanPriorFileWrites)" Condition="'%(Extension)' == '.int'" />
+            <ExistingGntFiles Include="@(_CleanPriorFileWrites)" Condition="'%(Extension)' == '.gnt'" />
+            <AllIntGntFiles Include="@(ExistingIntFiles);@(ExistingGntFiles)" Exclude="@(CobolFilesDeleted)" />
+        </ItemGroup>
+
+        <ItemGroup>
+            <_CleanCurrentFileWrites Include="@(AllIntGntFiles)" />
+            <_CleanPriorFileWrites Remove="@(AllIntGntFiles)" />
+        </ItemGroup>
+
+        <Message Text="_CleanCurrentFileWrites='@(_CleanCurrentFileWrites)'" Condition="'$(MSBuildTargetsVerbose)'=='true'" />
+        <Message Text="IntGNT files='@(AllIntGntFiles)'" Condition="'$(MSBuildTargetsVerbose)'=='true'" />
+    </Target>
+
+    <Target Name="AddPriorFileWritesToCurrentFileWrites" Condition="'@(Compile)' != '' and ('$(ManagedCode)' != 'true' or '$(LinkMultiDlls)'=='true')" BeforeTargets="_CleanGetCurrentAndPriorFileWrites">
+
+        <ItemGroup Condition="'@(IntermediateIdyFiles)' != ''">
+            <FileWrites Include="@(IntermediateIdyFiles)" />
+        </ItemGroup>
+
+        <ItemGroup Condition="'@(IntermediateBinaries)' != ''">
+            <FileWrites Include="@(IntermediateBinaries)" />
+        </ItemGroup>
+
+        <!-- Read in list of files that were written to disk in past builds. -->
+        <ReadLinesFromFile File="$(IntermediateOutputPath)$(CleanFile)" >
+            <Output TaskParameter="Lines" ItemName="CompileCleanPriorFileWrites"/>
+        </ReadLinesFromFile>
+
+        <ConvertToAbsolutePath Paths="@(CobolDeleted)">
+            <Output TaskParameter="AbsolutePaths" ItemName="CompileAbsolutePathFileDeletes"/>
+        </ConvertToAbsolutePath>
+
+        <ConvertToAbsolutePath Paths="@(FileWrites)">
+            <Output TaskParameter="AbsolutePaths" ItemName="CompileFileWrites"/>
+        </ConvertToAbsolutePath>
+
+        <ItemGroup Condition="'$(ManagedCode)' == 'true' and '$(LinkMultiDlls)'!='true'">
+            <CompileCleanPriorFileWrites Remove="@(CompileCleanPriorFileWrites)" />
+        </ItemGroup>
+
+        <ItemGroup>
+            <FileWrites Include="@(CompileFileWrites);@(CompileCleanPriorFileWrites)"  Exclude="@(CompileAbsolutePathFileDeletes)"/>
+        </ItemGroup>
+
+    </Target>
+
+    <Target Name="DeleteOldCobolOutputUnsuccessfulBuild" Condition="'$(CobolFilesDeleted)' != ''" BeforeTargets="_CleanRecordFileWrites">
+        <CallTarget Condition="'$(BuildingProject)' == 'true'"
+                Targets="DeleteOldCobolOutput" />
+    </Target>
+
+    <Target Name="DeleteOldCobolOutputIncrementalClean" Condition="'$(CobolFilesDeleted)' != ''" BeforeTargets="IncrementalClean">
+        <CallTarget Condition="'$(BuildingProject)' == 'true'"
+                Targets="DeleteOldCobolOutput" />	
+    </Target>
+
+    <Target Name="DeleteOldCobolOutput" >
+        <Delete Files="@(CobolFilesDeleted)" TreatErrorsAsWarnings="true" />	
+        <Message Text="Deleted COBOL Output='@(DirAbsPath)'" />
+    </Target>
+
+    <!-- Remove the build state file used in the up-to-date checking. Executed when a build fails -->
+    <Target Name="RemoveBuildStateFile" Condition="'$(TrackFileAccess)' == 'true' and Exists('$(IntermediateOutputPath)$(ProjectName).TrackingLogs\$(ProjectName).cobolBuildState')">
+        <Delete Files="$(IntermediateOutputPath)$(ProjectName).TrackingLogs\$(ProjectName).cobolBuildState"/>
+    </Target>
+
+    <Import Project="$(MSBuildThisFileDirectory)MicroFocus.Studio.targets" Condition="Exists('$(MSBuildThisFileDirectory)MicroFocus.Studio.targets')"/>
+    <Import Project="$(MSBuildThisFileDirectory)MicroFocus.CodeAnalysis.targets" Condition="Exists('$(MSBuildThisFileDirectory)MicroFocus.CodeAnalysis.targets')"/>
+    <Import Project="$(MSBuildThisFileDirectory)MicroFocus.QualityTools.targets" Condition="Exists('$(MSBuildThisFileDirectory)MicroFocus.QualityTools.targets') and '$(IsUnitTestProject)'=='true'"/>
+    <Import Project="$(MSBuildThisFileDirectory)MicroFocus.Containers.targets" Condition="Exists('$(MSBuildThisFileDirectory)MicroFocus.Containers.targets') and '$(EnableContainerSupport)' == 'true'"/>
+    <Import Project="$(MSBuildThisFileDirectory)Extensions\MicroFocus.*.targets"
+          Condition="Exists('$(MSBuildThisFileDirectory)Extensions')"/>
+
+</Project>

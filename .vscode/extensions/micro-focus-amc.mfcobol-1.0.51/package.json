@@ -1,0 +1,2390 @@
+{
+	"name": "mfcobol",
+	"displayName": "Micro Focus COBOL",
+	"description": "Extension for COBOL application development",
+	"version": "1.0.51",
+	"publisher": "Micro-Focus-AMC",
+	"license": "SEE LICENSE IN licenses/license.txt",
+	"icon": "icon.png",
+	"galleryBanner": {
+		"color": "#02003C",
+		"theme": "dark"
+	},
+	"keywords": [
+		"Micro Focus",
+		"COBOL",
+		"MF",
+		"Net Express",
+		"Server Express",
+		"Micro Focus Server",
+		"Enterprise Server",
+		"NX",
+		"SX",
+		"OCDS",
+		"Animator"
+	],
+	"engines": {
+		"vscode": "^1.73.0"
+	},
+	"categories": [
+		"Programming Languages",
+		"Debuggers",
+		"Snippets",
+		"Notebooks",
+		"Other"
+	],
+	"activationEvents": [
+		"onDebugInitialConfigurations",
+		"onTerminalProfile:mfcobol.terminal",
+		"onCommand:mfcobol.pickProcess",
+		"onCommand:mfcobol.registerVsdgExt",
+		"onCommand:mfcobol.unregisterVsdgExt",
+		"onCommand:mfcobol.indent",
+		"onCommand:mfcobol.outdent",
+		"onCommand:mfcobol.deleteLeft",
+		"onCommand:mfcobol.addCommentLine",
+		"onCommand:mfcobol.removeCommentLine",
+		"onCommand:mfcobol.toggleCommentLine",
+		"onCommand:mfcobol.openScreenset",
+		"onCommand:mfcobol.debugCurrentCobolFile",
+		"onCommand:mfcobol.runCurrentCobolFile",
+		"onCommand:mfcobol.newCobolProgram",
+		"onCommand:mfcobol.newDotNetCobolProgram",
+		"onCommand:mfcobol.newCobolNotebook",
+		"onCommand:mfcobol.registerJIT",
+		"onCommand:mfcobol.unregisterJIT",
+		"onCommand:mfcobol.configureJITconfig",
+		"onLanguage:cobol",
+		"onLanguage:mfdirectives",
+		"onNotebook:mfcobol-notebook",
+		"workspaceContains:**/*.{[Cc][Bb][Ll],[Cc][Pp][Yy],[Cc][Oo][Bb][Oo][Ll],[Cc][Oo][Bb],[Ee][Cc][Oo],[Pp][Cc][Oo],[Cc][Cc][Pp],[Ss][Qq][Bb],[Cc][Pp][Vv],[Cc][Pp][Ff],[Cc][Bb][Ll][Pp][Rr][Oo][Jj],[Cc][Oo][Bb][Oo][Ll][Bb][Uu][Ui][Ll][Dd]}"
+	],
+	"main": "./dist/extension.js",
+	"browser": "./webout/extension.js",
+	"l10n": "./l10n",
+	"contributes": {
+		"languages": [
+			{
+				"id": "cobol",
+				"aliases": [
+					"COBOL"
+				],
+				"extensions": [
+					".cbl",
+					".cpy",
+					".cobol",
+					".cob",
+					".eco",
+					".pco",
+					".ccp",
+					".sqb",
+					".cpv",
+					".cpf",
+					".ss",
+					".cpb",
+					".cls",
+					".ins",
+					".if",
+					".v1",
+					".mf",
+					".prc"
+				],
+				"configuration": "./cobol.language-configuration.json"
+			},
+			{
+				"id": "xml",
+				"extensions": [
+					".cblproj",
+					".cobolBuild",
+					".cobolProj"
+				]
+			},
+			{
+				"id": "dialogsystem",
+				"extensions": [
+					".gs"
+				]
+			},
+			{
+				"id": "cobconfig",
+				"aliases": [
+					"CobConfig"
+				],
+				"extensions": [
+					".cfg"
+				]
+			},
+			{
+				"id": "COBOL Directives",
+				"aliases": [
+					"COBOL Directives File"
+				],
+				"extensions": [
+					".dir"
+				]
+			},
+			{
+				"id": "mfdirectives",
+				"aliases": [
+					"Micro Focus Directives File"
+				],
+				"extensions": [
+					"directives.mf"
+				],
+				"configuration": "./mfdirective.language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "cobol",
+				"scopeName": "source.cobol",
+				"path": "./syntaxes/cobol.tmLanguage.json"
+			},
+			{
+				"scopeName": "markdown.cobol.codeblock",
+				"path": "./syntaxes/cobol.injection.json",
+				"injectTo": [
+					"text.html.markdown"
+				],
+				"embeddedLanguages": {
+					"meta.embedded.block.cobol": "cobol"
+				}
+			},
+			{
+				"language": "COBOL Directives",
+				"scopeName": "source.dir",
+				"path": "./syntaxes/dir.tmLanguage.json"
+			},
+			{
+				"language": "mfdirectives",
+				"scopeName": "source.mfdirectives",
+				"path": "./syntaxes/mfdirectives.tmLanguage.json"
+			}
+		],
+		"commands": [
+			{
+				"command": "mfcobol.setSourceFormat",
+				"title": "%commands.setSourceFormat.title%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.setDialect",
+				"title": "%commands.setDialect.title%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.registerVsdgExt",
+				"title": "%commands.registerVsdgExt.title%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.unregisterVsdgExt",
+				"title": "%commands.unregisterVsdgExt.title%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.dotNetGenerateAssets",
+				"title": "%commands.dotNetGenerateAssets.title%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.watchpointView.refresh",
+				"title": "%commands.watchpointView.refresh.title%",
+				"icon": "$(refresh)",
+				"category": "Debug"
+			},
+			{
+				"command": "mfcobol.watchpointView.add",
+				"title": "%commands.watchpointView.add.title%",
+				"icon": "$(add)",
+				"category": "Debug"
+			},
+			{
+				"command": "mfcobol.watchpointView.deleteAll",
+				"title": "%commands.watchpointView.deleteAll.title%",
+				"icon": "$(close-all)",
+				"category": "Debug"
+			},
+			{
+				"command": "mfcobol.watchpointView.delete",
+				"title": "%commands.watchpointView.delete.title%",
+				"icon": "$(close)",
+				"category": "Debug"
+			},
+			{
+				"command": "mfcobol.watchpointView.rename",
+				"title": "%commands.watchpointView.rename.title%",
+				"icon": "$(edit)",
+				"category": "Debug"
+			},
+			{
+				"command": "mfcobol.watchpointView.toggleWatchpoint",
+				"title": "%commands.watchpointView.toggleWatchpoint.title%",
+				"icon": "$(activate-breakpoints)",
+				"category": "Debug"
+			},
+			{
+				"command": "mfcobol.watchpointView.editPassStyle",
+				"title": "%commands.watchpointView.editPassStyle.title%",
+				"icon": "$(gear)",
+				"category": "Debug"
+			},
+			{
+				"command": "mfcobol.watchpointView.editCondition",
+				"title": "%commands.watchpointView.editCondition.title%",
+				"icon": "$(edit)",
+				"category": "Debug"
+			},
+			{
+				"command": "mfcobol.watchpointView.toggleCondition",
+				"title": "%commands.watchpointView.toggleCondition.title%",
+				"icon": "$(check)",
+				"category": "Debug"
+			},
+			{
+				"command": "mfcobol.programBreakpointView.refresh",
+				"title": "%commands.programBreakpointView.refresh.title%",
+				"icon": "$(refresh)",
+				"category": "Debug"
+			},
+			{
+				"command": "mfcobol.programBreakpointView.add",
+				"title": "%commands.programBreakpointView.add.title%",
+				"icon": "$(add)",
+				"category": "Debug"
+			},
+			{
+				"command": "mfcobol.programBreakpointView.deleteAll",
+				"title": "%commands.programBreakpointView.deleteAll.title%",
+				"icon": "$(close-all)",
+				"category": "Debug"
+			},
+			{
+				"command": "mfcobol.programBreakpointView.delete",
+				"title": "%commands.programBreakpointView.delete.title%",
+				"icon": "$(close)",
+				"category": "Debug"
+			},
+			{
+				"command": "mfcobol.programBreakpointView.rename",
+				"title": "%commands.programBreakpointView.rename.title%",
+				"icon": "$(edit)",
+				"category": "Debug"
+			},
+			{
+				"command": "mfcobol.programBreakpointView.toggleEnabled",
+				"title": "%commands.programBreakpointView.toggleEnabled.title%",
+				"icon": "$(activate-breakpoints)",
+				"category": "Debug"
+			},
+			{
+				"command": "mfcobol.indent",
+				"title": "%commands.indent.title%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.outdent",
+				"title": "%commands.outdent.title%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.deleteLeft",
+				"title": "%commands.deleteLeft.title%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.addCommentLine",
+				"title": "%commands.addCommentLine.title%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.removeCommentLine",
+				"title": "%commands.removeCommentLine.title%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.toggleCommentLine",
+				"title": "%commands.toggleCommentLine.title%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.languageServer.reparse",
+				"title": "%commands.languageServer.reparse.title%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.languageServer.controls",
+				"title": "%commands.languageServer.controls.title%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.languageServer.setMainFile",
+				"title": "%commands.languageServer.setMainFile.title%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.openScreenset",
+				"title": "%commands.openScreenset.title%",
+				"category": "Dialog System"
+			},
+			{
+				"command": "mfcobol.debugCurrentCobolFile",
+				"title": "%commands.debugCobolFile%",
+				"icon": "$(debug-alt)",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.runCurrentCobolFile",
+				"title": "%commands.runCobolFile%",
+				"category": "COBOL",
+				"icon": "$(run)"
+			},
+			{
+				"command": "mfcobol.newCobolProgram",
+				"title": "%commands.newCobolProgram%",
+				"category": "COBOL",
+				"icon": "$(add)"
+			},
+			{
+				"command": "mfcobol.newDotNetCobolProgram",
+				"title": "%commands.newDotNetCobolProgram%",
+				"category": "COBOL",
+				"icon": "$(add)"
+			},
+			{
+				"command": "mfcobol.newCobolNotebook",
+				"title": "%commands.newCobolNotebook%",
+				"category": "COBOL",
+				"icon": "$(add)"
+			},
+			{
+				"command": "mfcobol.registerJIT",
+				"title": "%commands.registerJIT%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.unregisterJIT",
+				"title": "%commands.unregisterJIT%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.configureJITconfig",
+				"title": "%commands.configureJITconfig%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.notebook.debugCell",
+				"title": "%commands.notebook.debugCell%",
+				"icon": "$(debug-alt-small)",
+				"category": "COBOL",
+				"enablement": "isWorkspaceTrusted && !isWeb && notebookCellType == code && notebookType == mfcobol-notebook"
+			},
+			{
+				"command": "mfcobol.notebook.stepIntoCell",
+				"title": "%commands.notebook.stepIntoCell%",
+				"icon": "$(debug-line-by-line)",
+				"category": "COBOL",
+				"enablement": "isWorkspaceTrusted && !isWeb && notebookCellType == code && notebookType == mfcobol-notebook"
+			},
+			{
+				"command": "mfcobol.notebook.editJSON",
+				"title": "%commands.notebook.editJSON%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.notebook.setTarget",
+				"shortTitle": "%commands.notebook.setTarget.shortTitle%",
+				"title": "%commands.notebook.setTarget.title%",
+				"icon": "$(debug-alt)",
+				"category": "COBOL",
+				"enablement": "isWorkspaceTrusted && notebookType == mfcobol-notebook"
+			},
+			{
+				"command": "mfcobol.notebook.addDirective",
+				"shortTitle": "%commands.notebook.addDirective.shortTitle%",
+				"title": "%commands.notebook.addDirective.title%",
+				"icon": "$(add)",
+				"category": "COBOL",
+				"enablement": "isWorkspaceTrusted && notebookType == mfcobol-notebook"
+			},
+			{
+				"command": "mfcobol.notebook.deleteDirectives",
+				"shortTitle": "%commands.notebook.deleteDirectives.shortTitle%",
+				"title": "%commands.notebook.deleteDirectives.title%",
+				"icon": "$(close)",
+				"category": "COBOL",
+				"enablement": "isWorkspaceTrusted && notebookType == mfcobol-notebook"
+			},
+			{
+				"command": "mfcobol.watchpoint.addFromContext",
+				"title": "%commands.watchpoint.addFromContext%",
+				"icon": "$(add)",
+				"category": "Debug"
+			},
+			{
+				"command": "mfcobol.programBreakpoint.addFromContext",
+				"title": "%commands.programBreakpoint.addFromContext%",
+				"icon": "$(add)",
+				"category": "Debug"
+			},
+			{
+				"command": "mfcobol.coboljvm.debug.registerInJdtLs",
+				"title": "%commands.registerInJdtLs.title%",
+				"category": "COBOL"
+			},
+			{
+				"command": "mfcobol.coboljvm.debug.unregisterInJdtLs",
+				"title": "%commands.unregisterInJdtLs.title%",
+				"category": "COBOL"
+			}
+		],
+		"keybindings": [
+			{
+				"key": "tab",
+				"command": "mfcobol.indent",
+				"when": "editorLangId == cobol && config.microFocusCOBOL.editor.improvedTabStops && !inSnippetMode && editorTextFocus && !editorReadonly && !editorTabMovesFocus && !suggestWidgetVisible"
+			},
+			{
+				"key": "shift+tab",
+				"command": "mfcobol.outdent",
+				"when": "editorLangId == cobol && config.microFocusCOBOL.editor.improvedTabStops && !inSnippetMode && editorTextFocus && !editorReadonly && !editorTabMovesFocus"
+			},
+			{
+				"key": "ctrl+]",
+				"command": "mfcobol.indent",
+				"when": "editorLangId == cobol && config.microFocusCOBOL.editor.improvedTabStops && !inSnippetMode && editorTextFocus && !editorReadonly && !editorTabMovesFocus"
+			},
+			{
+				"key": "ctrl+[",
+				"command": "mfcobol.outdent",
+				"when": "editorLangId == cobol && config.microFocusCOBOL.editor.improvedTabStops && !inSnippetMode && editorTextFocus && !editorReadonly && !editorTabMovesFocus"
+			},
+			{
+				"key": "backspace",
+				"command": "mfcobol.deleteLeft",
+				"when": "editorLangId == cobol && config.microFocusCOBOL.editor.improvedTabStops && editorTextFocus && !editorReadonly"
+			},
+			{
+				"key": "shift+backspace",
+				"command": "mfcobol.deleteLeft",
+				"when": "editorLangId == cobol && config.microFocusCOBOL.editor.improvedTabStops && editorTextFocus && !editorReadonly"
+			},
+			{
+				"key": "ctrl+k ctrl+c",
+				"command": "mfcobol.addCommentLine",
+				"when": "editorLangId == cobol && editorTextFocus && !editorReadonly"
+			},
+			{
+				"key": "ctrl+k ctrl+u",
+				"command": "mfcobol.removeCommentLine",
+				"when": "editorLangId == cobol && editorTextFocus && !editorReadonly"
+			},
+			{
+				"key": "ctrl+/",
+				"command": "mfcobol.toggleCommentLine",
+				"when": "editorLangId == cobol && editorTextFocus && !editorReadonly"
+			},
+			{
+				"key": "shift+alt+a",
+				"command": "mfcobol.toggleCommentLine",
+				"when": "editorLangId == cobol && editorTextFocus && !editorReadonly"
+			},
+			{
+				"command": "mfcobol.notebook.debugCell",
+				"key": "ctrl+alt+shift+enter"
+			}
+		],
+		"menus": {
+			"file/newFile": [
+				{
+					"command": "mfcobol.newCobolProgram"
+				},
+				{
+					"command": "mfcobol.newDotNetCobolProgram"
+				},
+				{
+					"command": "mfcobol.newCobolNotebook"
+				}
+			],
+			"explorer/context": [
+				{
+					"command": "mfcobol.openScreenset",
+					"when": "!isWeb && isWindows && resourceLangId == dialogsystem",
+					"group": "navigation"
+				},
+				{
+					"command": "mfcobol.notebook.editJSON",
+					"when": "isWorkspaceTrusted && resourceExtname == .cblnb",
+					"group": "navigation"
+				}
+			],
+			"editor/context": [
+				{
+					"command": "mfcobol.languageServer.reparse",
+					"group": "mfcobol.languageServer",
+					"when": "editorLangId == cobol && !editorReadonly && mfcobol.languageServer.running"
+				},
+				{
+					"command": "mfcobol.watchpoint.addFromContext",
+					"group": "mfcobol.breakpoints",
+					"when": "editorLangId == cobol && editorHasSelection"
+				},
+				{
+					"command": "mfcobol.programBreakpoint.addFromContext",
+					"group": "mfcobol.breakpoints",
+					"when": "editorLangId == cobol && editorHasSelection"
+				}
+			],
+			"editor/title/run": [
+				{
+					"command": "mfcobol.debugCurrentCobolFile",
+					"when": "!isWeb && editorLangId == cobol && mfcobol.isCobolSourceFile",
+					"group": "navigation@0"
+				},
+				{
+					"command": "mfcobol.runCurrentCobolFile",
+					"when": "!isWeb && editorLangId == cobol && mfcobol.isCobolSourceFile",
+					"group": "navigation@1"
+				}
+			],
+			"view/title": [
+				{
+					"command": "mfcobol.watchpointView.refresh",
+					"when": "view == watchpointView",
+					"group": "navigation"
+				},
+				{
+					"command": "mfcobol.watchpointView.add",
+					"when": "view == watchpointView",
+					"group": "navigation"
+				},
+				{
+					"command": "mfcobol.watchpointView.deleteAll",
+					"when": "view == watchpointView",
+					"group": "navigation"
+				},
+				{
+					"command": "mfcobol.programBreakpointView.refresh",
+					"when": "view == programBreakpointView",
+					"group": "navigation"
+				},
+				{
+					"command": "mfcobol.programBreakpointView.add",
+					"when": "view == programBreakpointView",
+					"group": "navigation"
+				},
+				{
+					"command": "mfcobol.programBreakpointView.deleteAll",
+					"when": "view == programBreakpointView",
+					"group": "navigation"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "mfcobol.watchpointView.toggleWatchpoint",
+					"when": "view == watchpointView && viewItem == watchpoint",
+					"group": "inline@1"
+				},
+				{
+					"command": "mfcobol.watchpointView.delete",
+					"when": "view == watchpointView && viewItem == watchpoint",
+					"group": "inline@3"
+				},
+				{
+					"command": "mfcobol.watchpointView.rename",
+					"when": "view == watchpointView && viewItem == watchpoint",
+					"group": "inline@2"
+				},
+				{
+					"command": "mfcobol.watchpointView.editCondition",
+					"when": "view == watchpointView && viewItem == watchpointCondition",
+					"group": "inline@2"
+				},
+				{
+					"command": "mfcobol.watchpointView.toggleCondition",
+					"when": "view == watchpointView && viewItem == watchpointCondition",
+					"group": "inline@1"
+				},
+				{
+					"command": "mfcobol.watchpointView.editPassStyle",
+					"when": "view == watchpointView && viewItem == watchpointCondition",
+					"group": "inline@3"
+				},
+				{
+					"command": "mfcobol.programBreakpointView.toggleEnabled",
+					"when": "view == programBreakpointView && viewItem == programBreakpoint",
+					"group": "inline@1"
+				},
+				{
+					"command": "mfcobol.programBreakpointView.delete",
+					"when": "view == programBreakpointView && viewItem == programBreakpoint",
+					"group": "inline@3"
+				},
+				{
+					"command": "mfcobol.programBreakpointView.rename",
+					"when": "view == programBreakpointView && viewItem == programBreakpoint",
+					"group": "inline@2"
+				}
+			],
+			"notebook/toolbar": [
+				{
+					"command": "mfcobol.notebook.setTarget",
+					"group": "navigation@1",
+					"when": "notebookType == mfcobol-notebook && isWorkspaceTrusted"
+				},
+				{
+					"command": "mfcobol.notebook.addDirective",
+					"group": "navigation@2",
+					"when": "notebookType == mfcobol-notebook && isWorkspaceTrusted"
+				},
+				{
+					"command": "mfcobol.notebook.deleteDirectives",
+					"group": "navigation@3",
+					"when": "notebookType == mfcobol-notebook && isWorkspaceTrusted"
+				}
+			],
+			"notebook/cell/title": [
+				{
+					"command": "mfcobol.notebook.stepIntoCell",
+					"when": "isWorkspaceTrusted && !isWeb && notebookType == mfcobol-notebook && notebookCellType == code",
+					"group": "inline/cell@0"
+				}
+			],
+			"notebook/cell/execute": [
+				{
+					"command": "mfcobol.notebook.debugCell",
+					"when": "isWorkspaceTrusted && !isWeb && notebookType == mfcobol-notebook && notebookCellType == code"
+				}
+			],
+			"commandPalette": [
+				{
+					"command": "mfcobol.indent",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.outdent",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.deleteLeft",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.addCommentLine",
+					"when": "editorLangId == cobol && !editorReadonly"
+				},
+				{
+					"command": "mfcobol.removeCommentLine",
+					"when": "editorLangId == cobol && !editorReadonly"
+				},
+				{
+					"command": "mfcobol.toggleCommentLine",
+					"when": "editorLangId == cobol && !editorReadonly"
+				},
+				{
+					"command": "mfcobol.watchpointView.toggleWatchpoint",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.watchpointView.editCondition",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.watchpointView.toggleCondition",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.watchpointView.delete",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.watchpointView.rename",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.watchpointView.refresh",
+					"when": "mfcobol.breakpointsView"
+				},
+				{
+					"command": "mfcobol.watchpointView.add",
+					"when": "mfcobol.breakpointsView"
+				},
+				{
+					"command": "mfcobol.watchpointView.deleteAll",
+					"when": "mfcobol.breakpointsView"
+				},
+				{
+					"command": "mfcobol.watchpointView.editPassStyle",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.programBreakpointView.toggleEnabled",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.programBreakpointView.delete",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.programBreakpointView.rename",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.programBreakpointView.refresh",
+					"when": "mfcobol.breakpointsView"
+				},
+				{
+					"command": "mfcobol.programBreakpointView.add",
+					"when": "mfcobol.breakpointsView"
+				},
+				{
+					"command": "mfcobol.programBreakpointView.deleteAll",
+					"when": "mfcobol.breakpointsView"
+				},
+				{
+					"command": "mfcobol.languageServer.reparse",
+					"when": "editorLangId == cobol && !editorReadonly && mfcobol.languageServer.running"
+				},
+				{
+					"command": "mfcobol.languageServer.controls",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.languageServer.setMainFile",
+					"when": "editorLangId == cobol && !editorReadonly && mfcobol.languageServer.running"
+				},
+				{
+					"command": "mfcobol.openScreenset",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.debugCurrentCobolFile",
+					"when": "!isWeb && editorLangId == cobol && mfcobol.isCobolSourceFile"
+				},
+				{
+					"command": "mfcobol.runCurrentCobolFile",
+					"when": "!isWeb && editorLangId == cobol && mfcobol.isCobolSourceFile"
+				},
+				{
+					"command": "mfcobol.registerJIT",
+					"when": "isWindows"
+				},
+				{
+					"command": "mfcobol.unregisterJIT",
+					"when": "isWindows"
+				},
+				{
+					"command": "mfcobol.configureJITconfig",
+					"when": "editorLangId == cobconfig"
+				},
+				{
+					"command": "mfcobol.notebook.stepIntoCell",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.notebook.debugCell",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.notebook.editJSON",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.notebook.setTarget",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.notebook.addDirective",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.notebook.deleteDirectives",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.watchpoint.addFromContext",
+					"when": "false"
+				},
+				{
+					"command": "mfcobol.programBreakpoint.addFromContext",
+					"when": "false"
+				}
+			]
+		},
+		"configuration": {
+			"title": "Micro Focus COBOL",
+			"properties": {
+				"microFocusCOBOL.editor.sourceFormat": {
+					"type": "string",
+					"default": "fixed",
+					"enum": [
+						"fixed",
+						"variable",
+						"free"
+					],
+					"description": "%config.editor.sourceFormat.description%"
+				},
+				"microFocusCOBOL.editor.dialect": {
+					"type": "string",
+					"default": "Micro Focus",
+					"enum": [
+						"COBOL for MVS",
+						"COBOL/370 release 1",
+						"VS COBOL II release 4.0",
+						"VS COBOL II release 3.x",
+						"VS COBOL II release 2.0",
+						"OS/VS COBOL",
+						"DOS/VS COBOL",
+						"COBOL for OS/390",
+						"Enterprise COBOL for z/OS",
+						"Micro Focus",
+						"ACUCOBOL",
+						"RM/COBOL"
+					],
+					"description": "%config.editor.dialect.description%"
+				},
+				"microFocusCOBOL.editor.improvedTabStops": {
+					"type": "boolean",
+					"default": true,
+					"description": "%config.editor.improvedTabStops.description%"
+				},
+				"microFocusCOBOL.editor.customTabStops": {
+					"type": "array",
+					"default": [],
+					"description": "%config.editor.customTabStops.description%"
+				},
+				"microFocusCOBOL.editor.smartEdit": {
+					"type": "boolean",
+					"default": false,
+					"description": "%config.editor.smartEdit.description%"
+				},
+				"microFocusCOBOL.installLocation": {
+					"type": "string",
+					"description": "%config.installLocation.description%"
+				},
+				"microFocusCOBOL.suppressBuildAssetsPrompt": {
+					"type": "boolean",
+					"default": false,
+					"description": "%config.suppressBuildAssetsPrompt.description%"
+				},
+				"microFocusCOBOL.MSBuild.resolve": {
+					"description": "%config.MSBuild.resolve.description%",
+					"default": "Autodetect",
+					"enum": [
+						"Use Current Environment",
+						"Autodetect",
+						"User Defined"
+					],
+					"enumDescriptions": [
+						"%config.MSBuild.resolve.current.description%",
+						"%config.MSBuild.resolve.auto.description%",
+						"%config.MSBuild.resolve.user.description%"
+					]
+				},
+				"microFocusCOBOL.MSBuild.path": {
+					"description": "%config.MSBuild.path.description%",
+					"type": "string"
+				},
+				"microFocusCOBOL.ant.ant_homeResolve": {
+					"description": "%config.ant.ant_homeResolve.description%",
+					"default": "Use Current Environment",
+					"enum": [
+						"Use Current Environment",
+						"User Defined"
+					],
+					"enumDescriptions": [
+						"%config.ant.ant_homeResolve.current.description%",
+						"%config.ant.ant_homeResolve.user.description%"
+					]
+				},
+				"microFocusCOBOL.ant.ant_homePath": {
+					"description": "%config.ant.ant_homePath.description%",
+					"type": "string"
+				},
+				"microFocusCOBOL.ant.java_homeResolve": {
+					"description": "%config.ant.java_homeResolve.description%",
+					"default": "Use Current Environment",
+					"enum": [
+						"Use Current Environment",
+						"User Defined"
+					],
+					"enumDescriptions": [
+						"%config.ant.java_homeResolve.current.description%",
+						"%config.ant.java_homeResolve.user.description%"
+					]
+				},
+				"microFocusCOBOL.ant.java_homePath": {
+					"description": "%config.ant.java_homePath.description%",
+					"type": "string"
+				},
+				"microFocusCOBOL.suppressFileAssociationsPrompt": {
+					"type": "boolean",
+					"default": false,
+					"description": "%config.suppressFileAssociationsPrompt.description%"
+				},
+				"microFocusCOBOL.CTF.configurationFile": {
+					"description": "%config.CTF.configurationFile.description%",
+					"type": "string"
+				},
+				"cobolLanguageServer.trace.server": {
+					"scope": "window",
+					"type": "string",
+					"enum": [
+						"off",
+						"messages",
+						"verbose"
+					],
+					"default": "messages",
+					"description": "%config.cobolLanguageServer.trace.server.description%"
+				},
+				"microFocusCOBOL.languageServerAutostart": {
+					"type": "boolean",
+					"default": true,
+					"description": "%config.languageServerAutostart.description%"
+				},
+				"microFocusCOBOL.terminal.32bit": {
+					"type": "boolean",
+					"default": false,
+					"description": "%config.terminal.32bit.description%"
+				},
+				"microFocusCOBOL.defaultDirectives": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": [
+						"int()",
+						"anim",
+						"nognt",
+						"errformat(3)"
+					],
+					"description": "%config.defaultDirectives.description%"
+				},
+				"microFocusCOBOL.mfunit.discoverers": {
+					"type": "array",
+					"description": "Configure Micro Focus Unit Testing discoverers.",
+					"items": {
+						"type": "object",
+						"required": [
+							"runner",
+							"globPattern",
+							"is64Bit"
+						],
+						"properties": {
+							"runner": {
+								"type": "string",
+								"enum": [
+									"mfurun",
+									"mfurunil",
+									"mfurunil6",
+									"mfurunj",
+									"cobmfurun_t"
+								],
+								"enumDescriptions": [
+									"mfurun/cobmfurun (native)",
+									"mfurunil (.NET framework) (Windows Only)",
+									"mfurunil6/cobmfurunil6 (.NET6)",
+									"mfurunj (JVM)",
+									"cobmfurun_t (Linux threaded)"
+								],
+								"description": "Specify the runner used for test execution."
+							},
+							"is64Bit": {
+								"type": "boolean",
+								"description": "Determines the bitism of the COBOL environment the runner will use."
+							},
+							"globPattern": {
+								"type": "string",
+								"description": "Glob pattern of test binaries to look for."
+							},
+							"delay": {
+								"type": "number",
+								"description": "Specifies the number of milliseconds to wait before running test discovery after file change notifications."
+							}
+						}
+					}
+				},
+				"microFocusDirectivesFile.trace.server": {
+					"scope": "window",
+					"type": "string",
+					"enum": [
+						"off",
+						"messages",
+						"verbose"
+					],
+					"default": "messages",
+					"description": "%config.microFocusDirectivesFile.trace.server.description%"
+				}
+			}
+		},
+		"configurationDefaults": {
+			"[cobol]": {
+				"editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?",
+				"editor.rulers": [
+					6,
+					7,
+					11,
+					72
+				],
+				"editor.guides.indentation": false,
+				"editor.formatOnType": true
+			},
+			"[COBOL Directives]": {
+				"editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?",
+				"editor.guides.indentation": false
+			}
+		},
+		"semanticTokenTypes": [
+			{
+				"id": "cobol-text",
+				"superType": "string",
+				"description": "%semanticTokenTypes.cobol-text.description%"
+			},
+			{
+				"id": "cobol-keyword",
+				"superType": "keyword",
+				"description": "%semanticTokenTypes.cobol-keyword.description%"
+			},
+			{
+				"id": "cobol-comment",
+				"superType": "comment",
+				"description": "%semanticTokenTypes.cobol-comment.description%"
+			},
+			{
+				"id": "cobol-identifier",
+				"superType": "variable",
+				"description": "%semanticTokenTypes.cobol-identifier.description%"
+			},
+			{
+				"id": "cobol-string",
+				"superType": "string",
+				"description": "%semanticTokenTypes.cobol-string.description%"
+			},
+			{
+				"id": "cobol-number",
+				"superType": "number",
+				"description": "%semanticTokenTypes.cobol-number.description%"
+			},
+			{
+				"id": "cobol-period",
+				"superType": "operator",
+				"description": "%semanticTokenTypes.cobol-period.description%"
+			},
+			{
+				"id": "cobol-class",
+				"superType": "class",
+				"description": "%semanticTokenTypes.cobol-class.description%"
+			},
+			{
+				"id": "cobol-directive",
+				"superType": "label",
+				"description": "%semanticTokenTypes.cobol-directive.description%"
+			},
+			{
+				"id": "cobol-illegal-char",
+				"superType": "operator",
+				"description": "%semanticTokenTypes.cobol-illegal-char.description%"
+			},
+			{
+				"id": "cobol-doc-comment",
+				"superType": "comment",
+				"description": "%semanticTokenTypes.cobol-doc-comment.description%"
+			},
+			{
+				"id": "cobol-margin",
+				"superType": "comment",
+				"description": "%semanticTokenTypes.cobol-margin.description%"
+			},
+			{
+				"id": "cobol-level78",
+				"superType": "enumMember",
+				"description": "%semanticTokenTypes.cobol-level78.description%"
+			}
+		],
+		"taskDefinitions": [
+			{
+				"type": "COBOL-MSBuild",
+				"required": [
+					"buildTarget"
+				],
+				"properties": {
+					"command": {
+						"type": "string",
+						"description": "%tasks.msbuild.command.description%"
+					},
+					"buildTarget": {
+						"type": "string",
+						"description": "%tasks.msbuild.buildTarget.description%"
+					},
+					"args": {
+						"type": "array",
+						"description": "%tasks.msbuild.args.description%",
+						"items": {
+							"type": [
+								"object",
+								"string"
+							],
+							"properties": {
+								"value": {
+									"type": "string",
+									"description": "%tasks.args.value.description%"
+								},
+								"quoting": {
+									"type": "string",
+									"description": "%tasks.args.quoting.description%",
+									"enum": [
+										"escape",
+										"strong",
+										"weak"
+									],
+									"enumDescriptions": [
+										"%tasks.args.quoting.escape.description%",
+										"%tasks.args.quoting.strong.description%",
+										"%tasks.args.quoting.weak.description%"
+									]
+								}
+							}
+						}
+					}
+				}
+			},
+			{
+				"type": "COBOL-Ant",
+				"required": [
+					"buildTarget"
+				],
+				"properties": {
+					"mfAntLib": {
+						"type": "string",
+						"description": "%tasks.ant.mfAntLib.description%"
+					},
+					"buildTarget": {
+						"type": "string",
+						"description": "%tasks.ant.buildTarget.description%"
+					},
+					"args": {
+						"type": "array",
+						"description": "%tasks.ant.args.description%",
+						"items": {
+							"type": [
+								"object",
+								"string"
+							],
+							"properties": {
+								"value": {
+									"type": "string",
+									"description": "%tasks.args.value.description%"
+								},
+								"quoting": {
+									"type": "string",
+									"description": "%tasks.args.quoting.description%",
+									"enum": [
+										"escape",
+										"strong",
+										"weak"
+									],
+									"enumDescriptions": [
+										"%tasks.args.quoting.escape.description%",
+										"%tasks.args.quoting.strong.description%",
+										"%tasks.args.quoting.strong.description%"
+									]
+								}
+							}
+						}
+					}
+				}
+			},
+			{
+				"type": "COBOL-shell",
+				"properties": {
+					"command": {
+						"type": [
+							"object",
+							"string"
+						],
+						"description": "%tasks.shell.command.description%",
+						"properties": {
+							"value": {
+								"type": "string",
+								"description": "%tasks.shell.command.value.description%"
+							},
+							"quoting": {
+								"type": "string",
+								"description": "%tasks.args.quoting.description%",
+								"enum": [
+									"escape",
+									"strong",
+									"weak"
+								],
+								"enumDescriptions": [
+									"%tasks.args.quoting.escape.description%",
+									"%tasks.args.quoting.strong.description%",
+									"%tasks.args.quoting.strong.description%"
+								]
+							}
+						}
+					},
+					"windows": {
+						"type": "object",
+						"properties": {
+							"is64bit": {
+								"type": "boolean",
+								"default": false,
+								"description": "%tasks.shell.command.windows.is64Bit.description%"
+							},
+							"command": {
+								"type": [
+									"object",
+									"string"
+								],
+								"description": "%tasks.shell.command.windows.command.description%",
+								"properties": {
+									"value": {
+										"type": "string",
+										"description": "%tasks.shell.command.value.description%"
+									},
+									"quoting": {
+										"type": "string",
+										"description": "%tasks.shell.command.quoting.description%",
+										"enum": [
+											"escape",
+											"strong",
+											"weak"
+										],
+										"enumDescriptions": [
+											"%tasks.shell.command.quoting.escape.description%",
+											"%tasks.shell.command.quoting.strong.description%",
+											"%tasks.shell.command.quoting.weak.description%"
+										]
+									}
+								}
+							},
+							"args": {
+								"type": "array",
+								"description": "%tasks.shell.command.windows.args.description%",
+								"items": {
+									"type": [
+										"object",
+										"string"
+									],
+									"properties": {
+										"value": {
+											"type": "string",
+											"description": "%tasks.args.value.description%"
+										},
+										"quoting": {
+											"type": "string",
+											"description": "%tasks.args.quoting.description%",
+											"enum": [
+												"escape",
+												"strong",
+												"weak"
+											],
+											"enumDescriptions": [
+												"%tasks.args.quoting.escape.description%",
+												"%tasks.args.quoting.strong.description%",
+												"%tasks.args.quoting.weak.description%"
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					"linux": {
+						"type": "object",
+						"properties": {
+							"is64bit": {
+								"type": "boolean",
+								"default": true,
+								"description": "%tasks.shell.command.linux.is64Bit.description%"
+							},
+							"command": {
+								"type": [
+									"object",
+									"string"
+								],
+								"description": "%tasks.shell.command.linux.command.description%",
+								"properties": {
+									"value": {
+										"type": "string",
+										"description": "%tasks.shell.command.value.description%"
+									},
+									"quoting": {
+										"type": "string",
+										"description": "%tasks.shell.command.quoting.description%",
+										"enum": [
+											"escape",
+											"strong",
+											"weak"
+										],
+										"enumDescriptions": [
+											"%tasks.shell.command.quoting.escape.description%",
+											"%tasks.shell.command.quoting.strong.description%",
+											"%tasks.shell.command.quoting.weak.description%"
+										]
+									}
+								}
+							},
+							"args": {
+								"type": "array",
+								"description": "%tasks.shell.command.args.description%",
+								"items": {
+									"type": [
+										"object",
+										"string"
+									],
+									"properties": {
+										"value": {
+											"type": "string",
+											"description": "%tasks.args.value.description%"
+										},
+										"quoting": {
+											"type": "string",
+											"description": "%tasks.args.quoting.description%",
+											"enum": [
+												"escape",
+												"strong",
+												"weak"
+											],
+											"enumDescriptions": [
+												"%tasks.args.quoting.escape.description%",
+												"%tasks.args.quoting.strong.description%",
+												"%tasks.args.quoting.weak.description%"
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					"args": {
+						"type": "array",
+						"description": "%tasks.shell.command.args.description%",
+						"items": {
+							"type": [
+								"object",
+								"string"
+							],
+							"properties": {
+								"value": {
+									"type": "string",
+									"description": "%tasks.args.value.description%"
+								},
+								"quoting": {
+									"type": "string",
+									"description": "%tasks.args.quoting.description%",
+									"enum": [
+										"escape",
+										"strong",
+										"weak"
+									],
+									"enumDescriptions": [
+										"%tasks.args.quoting.escape.description%",
+										"%tasks.args.quoting.strong.description%",
+										"%tasks.args.quoting.weak.description%"
+									]
+								}
+							}
+						}
+					}
+				}
+			},
+			{
+				"type": "mf-process",
+				"required": [
+					"command"
+				],
+				"properties": {
+					"command": {
+						"type": "string",
+						"description": "%tasks.mfprocess.command.description%"
+					},
+					"args": {
+						"type": "array",
+						"description": "%tasks.mfprocess.args.description%"
+					}
+				}
+			}
+		],
+		"problemMatchers": [
+			{
+				"name": "COBOLMSBuild",
+				"owner": "cobol",
+				"fileLocation": "autoDetect",
+				"pattern": {
+					"regexp": "^\\s*(.+)\\((\\d+),(\\d+)\\).*(unrecoverable|severe|error|warning|info)(?:rmation)?\\s*(COB(?:CH|ES)?\\d+)\\s*:\\s*(.*)\\[.*$",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"severity": 4,
+					"code": 5,
+					"message": 6
+				}
+			},
+			{
+				"name": "COBOLAnt",
+				"owner": "cobol",
+				"fileLocation": "autoDetect",
+				"pattern": {
+					"regexp": "^\\s*\\[cobol\\]\\s*\\*\\*\\s*(COB(?:CH|ES)\\d+)[USE]\\s*(.*) :\\s+\"?([^\"]*)\"?\\((\\d+),(\\d+),(\\d+)\\).*$",
+					"code": 1,
+					"message": 2,
+					"file": 3,
+					"line": 4,
+					"column": 6
+				}
+			},
+			{
+				"name": "COBOLAntCopybooks",
+				"owner": "cobol",
+				"fileLocation": "autoDetect",
+				"pattern": {
+					"regexp": "^\\s*\\[cobol\\]\\s*\\*\\*\\s*(COB(?:CH|ES)\\d+)[USE]\\s*(.*) : .*,\"?([^\"]*)\"?\\((\\d+),(\\d+),(\\d+)\\).*$",
+					"code": 1,
+					"message": 2,
+					"file": 3,
+					"line": 4,
+					"column": 6
+				}
+			},
+			{
+				"name": "COBOLErrFormat2",
+				"owner": "cobol",
+				"fileLocation": [
+					"autoDetect",
+					"${cwd}"
+				],
+				"pattern": {
+					"regexp": "^\\*\\*\\s*(COB(?:CH|ES)\\d+)[USE]\\s*(.*) :\\s+\"?([^\"]*)\"?\\((\\d+),(\\d+),(\\d+)\\).*$",
+					"code": 1,
+					"message": 2,
+					"file": 3,
+					"line": 4,
+					"column": 6
+				}
+			},
+			{
+				"name": "COBOLErrFormat2Copybooks",
+				"owner": "cobol",
+				"fileLocation": "autoDetect",
+				"pattern": {
+					"regexp": "^\\*\\*\\s*(COB(?:CH|ES)\\d+)[USE]\\s*(.*) : .*,\"?([^\"]*)\"?\\((\\d+),(\\d+),(\\d+)\\).*$",
+					"code": 1,
+					"message": 2,
+					"file": 3,
+					"line": 4,
+					"column": 6
+				}
+			},
+			{
+				"name": "COBOLErrFormat3",
+				"owner": "cobol",
+				"fileLocation": [
+					"autoDetect",
+					"${cwd}"
+				],
+				"pattern": {
+					"regexp": "^\\s*([^*]*)\\((\\d+),(\\d+)\\).*(unrecoverable|severe|error|warning|info)(?:rmation)?\\s*(COB(?:CH|ES)\\d+)\\s*:\\s*(.*)$",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"severity": 4,
+					"code": 5,
+					"message": 6
+				}
+			}
+		],
+		"breakpoints": [
+			{
+				"language": "cobol"
+			}
+		],
+		"debuggers": [
+			{
+				"type": "cobol",
+				"label": "COBOL: (native)",
+				"variables": {
+					"pickProcess": "mfcobol.pickProcess"
+				},
+				"windows": {
+					"program": "./bin/debugadapter/win-x86/MicroFocus.VsCodeDebugProtocol.exe"
+				},
+				"linux": {
+					"program": "./bin/debugadapter/linux-x64/MicroFocus.VsCodeDebugProtocol"
+				},
+				"configurationAttributes": {
+					"launch": {
+						"oneOf": [
+							{
+								"required": [
+									"program"
+								]
+							},
+							{
+								"required": [
+									"enterpriseServer"
+								]
+							},
+							{
+								"required": [
+									"waitForAttachment"
+								]
+							}
+						],
+						"properties": {
+							"program": {
+								"type": "string",
+								"description": "%debug.cobol.native.properties.program.description%",
+								"default": "${workspaceFolder}/<insert-program-name-here>"
+							},
+							"stopOnEntry": {
+								"type": "boolean",
+								"description": "%debug.cobol.native.properties.stopOnEntry.description%",
+								"default": true
+							},
+							"trace": {
+								"type": "boolean",
+								"description": "%debug.cobol.native.properties.trace.description%",
+								"default": true
+							},
+							"cwd": {
+								"type": "string",
+								"description": "%debug.cobol.native.properties.cwd.description%",
+								"default": "${workspaceFolder}"
+							},
+							"args": {
+								"anyOf": [
+									{
+										"type": "array",
+										"description": "%debug.cobol.native.properties.args.array.description%",
+										"items": {
+											"type": "string"
+										},
+										"default": []
+									},
+									{
+										"type": "string",
+										"description": "%debug.cobol.native.properties.args.string.description%",
+										"default": ""
+									}
+								]
+							},
+							"symbolSearchPaths": {
+								"type": "array",
+								"description": "%debug.cobol.native.properties.symbolSearchPaths.description%",
+								"items": {
+									"type": "string"
+								},
+								"default": []
+							},
+							"env": {
+								"oneOf": [
+									{
+										"type": "array",
+										"description": "%debug.cobol.native.properties.env.description%",
+										"items": {
+											"type": "object",
+											"default": {},
+											"properties": {
+												"name": {
+													"type": "string",
+													"description": "%debug.cobol.native.properties.env.name.description%"
+												},
+												"value": {
+													"type": "string",
+													"description": "%debug.cobol.native.properties.env.value.description%"
+												}
+											}
+										},
+										"default": []
+									},
+									{
+										"type": "object",
+										"additionalProperties": {
+											"type": "string"
+										},
+										"description": "%debug.cobol.native.properties.env.description%",
+										"default": {}
+									}
+								]
+							},
+							"envFile": {
+								"type": "string",
+								"description": "%debug.cobol.native.properties.envFile.description%",
+								"default": "${workspaceFolder}/.env"
+							},
+							"enterpriseServer": {
+								"type": "object",
+								"description": "%debug.cobol.native.properties.es.description%",
+								"required": [
+									"serverName",
+									"serverAddress"
+								],
+								"properties": {
+									"serverName": {
+										"type": "string",
+										"default": "Please enter the name of the server to debug.",
+										"description": "%debug.cobol.native.properties.es.properties.serverName.description%"
+									},
+									"serverAddress": {
+										"type": "string",
+										"default": "Please enter the address of the 'mfcs-mp' or 'soap' listener for the server. eg tcp:127.0.0.1:<nnn>.",
+										"description": "%debug.cobol.native.properties.es.properties.serverAddress.description%"
+									},
+									"debugType": {
+										"type": "string",
+										"description": "%debug.cobol.native.properties.es.properties.debugType.description%",
+										"enum": [
+											"cics",
+											"ims",
+											"jcl",
+											"web",
+											"any"
+										],
+										"default": "cics"
+									},
+									"options": {
+										"description": "%debug.cobol.native.properties.es.properties.options.description%",
+										"anyOf": [
+											{
+												"type": "object",
+												"description:": "%debug.cobol.native.properties.es.properties.options.jcl.description%",
+												"default": {},
+												"properties": {
+													"jcl": {
+														"type": "object",
+														"properties": {
+															"jobName": {
+																"type": "string",
+																"description": "%debug.cobol.native.properties.es.properties.options.jcl.jobName.description%"
+															},
+															"jobNumber": {
+																"type": "string",
+																"description": "%debug.cobol.native.properties.es.properties.options.jcl.jobNumber.description%"
+															},
+															"stepName": {
+																"type": "string",
+																"description": "%debug.cobol.native.properties.es.properties.options.jcl.stepName.description%"
+															},
+															"topLevelProgram": {
+																"type": "string",
+																"description": "%debug.cobol.native.properties.es.properties.options.jcl.topLevelProgram.description%"
+															}
+														}
+													}
+												}
+											},
+											{
+												"type": "object",
+												"description:": "%debug.cobol.native.properties.es.properties.options.cics.description%",
+												"default": {},
+												"properties": {
+													"cics": {
+														"type": "object",
+														"properties": {
+															"user": {
+																"type": "string",
+																"description": "%debug.cobol.native.properties.es.properties.options.cics.user.description%"
+															},
+															"terminal": {
+																"type": "string",
+																"description": "%debug.cobol.native.properties.es.properties.options.cics.terminal.description%"
+															},
+															"transaction": {
+																"type": "string",
+																"description": "%debug.cobol.native.properties.es.properties.options.cics.transaction.description%"
+															},
+															"linkLevelProgram": {
+																"type": "string",
+																"description": "%debug.cobol.native.properties.es.properties.options.cics.linkLevelProgram.description%"
+															}
+														}
+													}
+												}
+											},
+											{
+												"type": "object",
+												"description:": "%debug.cobol.native.properties.es.properties.options.ims.description%",
+												"default": {},
+												"properties": {
+													"ims": {
+														"type": "object",
+														"properties": {
+															"user": {
+																"type": "string",
+																"description": "%debug.cobol.native.properties.es.properties.options.ims.user.description%"
+															},
+															"terminal": {
+																"type": "string",
+																"description": "%debug.cobol.native.properties.es.properties.options.ims.terminal.description%"
+															},
+															"transaction": {
+																"type": "string",
+																"description": "%debug.cobol.native.properties.es.properties.options.ims.transaction.description%"
+															},
+															"topLevelProgram": {
+																"type": "string",
+																"description": "%debug.cobol.native.properties.es.properties.options.ims.topLevelProgram.description%"
+															}
+														}
+													}
+												}
+											},
+											{
+												"type": "object",
+												"description:": "%debug.cobol.native.properties.es.properties.options.web.description%",
+												"default": {},
+												"properties": {
+													"web": {
+														"type": "object",
+														"properties": {
+															"clientIP": {
+																"type": "string",
+																"description": "%debug.cobol.native.properties.es.properties.options.web.clientIP.description%"
+															},
+															"serviceName": {
+																"type": "string",
+																"description": "%debug.cobol.native.properties.es.properties.options.web.serviceName.description%"
+															}
+														}
+													}
+												}
+											}
+										]
+									}
+								}
+							},
+							"stopAtStopRun": {
+								"type": "boolean",
+								"description": "%debug.cobol.native.properties.stopAtStopRun.description%",
+								"default": false
+							},
+							"stepOverIgnoreInline": {
+								"type": "boolean",
+								"description": "%debug.cobol.native.properties.stepOverIgnoreInline.description%",
+								"default": true
+							},
+							"programBreakpointMainEntryOnly": {
+								"type": "boolean",
+								"description": "%debug.cobol.native.properties.programBreakpointMainEntryOnly.description%",
+								"default": true
+							},
+							"remoteDebug": {
+								"type": "object",
+								"description": "%debug.cobol.native.properties.remoteDebug.description%",
+								"required": [
+									"machine",
+									"port"
+								],
+								"default": {
+									"machine": "Please enter the name or IP address of the machine runing cobdebugremote.",
+									"port": 0
+								},
+								"properties": {
+									"machine": {
+										"type": "string",
+										"description": "%debug.cobol.native.properties.remoteDebug.machine.description%",
+										"default": ""
+									},
+									"port": {
+										"type": "number",
+										"description": "%debug.cobol.native.properties.remoteDebug.port.description%",
+										"default": 0
+									}
+								}
+							},
+							"is64Bit": {
+								"type": "boolean",
+								"description": "%debug.cobol.native.properties.is64Bit.description%",
+								"default": false
+							},
+							"waitForAttachment": {
+								"type": "object",
+								"description": "%debug.cobol.native.properties.waitForAttachment.description%",
+								"oneOf": [
+									{
+										"properties": {
+											"directory": {
+												"type": "string",
+												"default": "Specify the directory",
+												"description": "%debug.cobol.native.properties.waitForAttachment.directory.description%"
+											},
+											"returnToWait": {
+												"type": "boolean",
+												"default": false,
+												"description": "%debug.cobol.native.properties.waitForAttachment.returnToWait.description%"
+											}
+										},
+										"required": [
+											"directory"
+										]
+									},
+									{
+										"properties": {
+											"id": {
+												"type": "string",
+												"default": "<unique-id>",
+												"description": "%debug.cobol.native.properties.waitForAttachment.id.description%"
+											}
+										},
+										"required": [
+											"id"
+										]
+									},
+									{
+										"properties": {
+											"any": {
+												"type": "object",
+												"default": {},
+												"description": "%debug.cobol.native.properties.waitForAttachment.any.description%"
+											},
+											"returnToWait": {
+												"type": "boolean",
+												"default": false,
+												"description": "%debug.cobol.native.properties.waitForAttachment.returnToWait.description%"
+											}
+										},
+										"required": [
+											"any"
+										]
+									}
+								]
+							},
+							"useConsole": {
+								"type": "boolean",
+								"description": "%debug.cobol.native.properties.useConsole.description%",
+								"default": true
+							},
+							"pathMappings": {
+								"type": "array",
+								"description": "%debug.cobol.native.properties.pathMappings.description%",
+								"items": {
+									"type": "object",
+									"default": {},
+									"properties": {
+										"remote": {
+											"type": "string",
+											"description": "%debug.cobol.native.properties.pathMappings.remote.description%"
+										},
+										"local": {
+											"type": "string",
+											"description": "%debug.cobol.native.properties.pathMappings.local.description%"
+										}
+									}
+								},
+								"default": []
+							},
+							"sourceFileMap": {
+								"type": "object",
+								"description": "%debug.cobol.native.properties.pathMappings.description%",
+								"additionalProperties": {
+									"type": "string"
+								}
+							},
+							"symbolsMustMatchProgram": {
+								"type": "boolean",
+								"description": "%debug.cobol.native.properties.symbolsMustMatchPogram.description%",
+								"default": true
+							}
+						}
+					},
+					"attach": {
+						"required": [
+							"processId"
+						],
+						"properties": {
+							"trace": {
+								"type": "boolean",
+								"description": "%debug.cobol.native.properties.trace.description%",
+								"default": true
+							},
+							"symbolSearchPaths": {
+								"type": "array",
+								"description": "%debug.cobol.native.properties.symbolSearchPaths.description%",
+								"items": {
+									"type": "string"
+								},
+								"default": []
+							},
+							"stepOverIgnoreInline": {
+								"type": "boolean",
+								"description": "%debug.cobol.native.properties.stepOverIgnoreInline.description%",
+								"default": true
+							},
+							"programBreakpointMainEntryOnly": {
+								"type": "boolean",
+								"description": "%debug.cobol.native.properties.programBreakpointMainEntryOnly.description%",
+								"default": true
+							},
+							"is64Bit": {
+								"type": "boolean",
+								"description": "%debug.cobol.native.properties.is64Bit.description%",
+								"default": false
+							},
+							"cwd": {
+								"type": "string",
+								"description": "%debug.cobol.native.properties.cwd.description%",
+								"default": "${workspaceFolder}"
+							},
+							"processName": {
+								"type": "string",
+								"description": "%debug.cobol.native.properties.processName.description%",
+								"default": ""
+							},
+							"processId": {
+								"anyOf": [
+									{
+										"type": "string",
+										"description": "%debug.cobol.native.properties.processId.description%",
+										"default": ""
+									},
+									{
+										"type": "integer",
+										"description": "%debug.cobol.native.properties.processId.description%",
+										"default": 0
+									}
+								]
+							},
+							"pathMappings": {
+								"type": "array",
+								"description": "%debug.cobol.native.properties.pathMappings.description%",
+								"items": {
+									"type": "object",
+									"default": {},
+									"properties": {
+										"remote": {
+											"type": "string",
+											"description": "%debug.cobol.native.properties.pathMappings.remote.description%"
+										},
+										"local": {
+											"type": "string",
+											"description": "%debug.cobol.native.properties.pathMappings.local.description%"
+										}
+									}
+								},
+								"default": []
+							},
+							"sourceFileMap": {
+								"type": "object",
+								"markdownDescription": "%debug.cobol.native.properties.pathMappings.description%",
+								"additionalProperties": {
+									"type": "string"
+								}
+							},
+							"useConsole": {
+								"type": "boolean",
+								"description": "%debug.cobol.native.properties.useConsole.description%",
+								"default": true
+							},
+							"symbolsMustMatchProgram": {
+								"type": "boolean",
+								"description": "%debug.cobol.native.properties.symbolsMustMatchPogram.description%",
+								"default": true
+							}
+						}
+					}
+				},
+				"initialConfigurations": [
+					{
+						"type": "cobol",
+						"request": "launch",
+						"name": "COBOL (native): Launch",
+						"program": "${workspaceFolder}/<insert-program-name-here>",
+						"cwd": "${workspaceFolder}",
+						"stopOnEntry": true
+					},
+					{
+						"type": "cobol",
+						"request": "attach",
+						"name": "COBOL (native): Attach to process",
+						"processId": "${command:pickProcess}"
+					}
+				],
+				"configurationSnippets": [
+					{
+						"label": "COBOL (native): Launch",
+						"description": "%debug.cobol.native.snippets.launch.description%",
+						"body": {
+							"type": "cobol",
+							"request": "launch",
+							"name": "COBOL (native)",
+							"program": "^\"\\${workspaceFolder}/<insert-program-name-here>\"",
+							"cwd": "^\"\\${workspaceFolder}\"",
+							"stopOnEntry": true
+						}
+					},
+					{
+						"label": "COBOL (native): Launch - remote",
+						"description": "%debug.cobol.native.snippets.launchRemote.description%",
+						"body": {
+							"type": "cobol",
+							"request": "launch",
+							"name": "COBOL (native): remote",
+							"program": "^\"<insert-program-name-here>\"",
+							"remoteDebug": {
+								"machine": "^\"Please enter the name or IP address of the machine runing cobdebugremote.\"",
+								"port": 0
+							},
+							"stopOnEntry": true
+						}
+					},
+					{
+						"label": "COBOL (native): Launch - Remote-SSH",
+						"description": "%debug.cobol.native.snippets.launchRemoteSSH.description%",
+						"body": {
+							"type": "cobol",
+							"request": "launch",
+							"name": "COBOL (native): Remote-SSH",
+							"program": "^\"<insert-program-name-here>\"",
+							"env": {
+								"TERM": "^\"xterm\"",
+								"DISPLAY": "^\"<hostname-or-ip:D.S>\""
+							},
+							"stopOnEntry": true
+						}
+					},
+					{
+						"label": "COBOL (native): Launch - 64-bit",
+						"description": "%debug.cobol.native.snippets.launch64Bit.description%",
+						"body": {
+							"type": "cobol",
+							"request": "launch",
+							"name": "COBOL (native): 64-bit",
+							"program": "^\"\\${workspaceFolder}/<insert-program-name-here>\"",
+							"cwd": "^\"\\${workspaceFolder}\"",
+							"is64Bit": true,
+							"stopOnEntry": true
+						}
+					},
+					{
+						"label": "COBOL (native): Attach to process",
+						"description": "%debug.cobol.native.snippets.attach.description%",
+						"body": {
+							"type": "cobol",
+							"request": "attach",
+							"name": "COBOL (native): Attach to process",
+							"processId": "^\"\\${command:pickProcess}\""
+						}
+					},
+					{
+						"label": "COBOL (native): Enterprise Server",
+						"description": "%debug.cobol.native.snippets.launchES.description%",
+						"body": {
+							"type": "cobol",
+							"request": "launch",
+							"name": "COBOL (native): Enterprise Server",
+							"enterpriseServer": {
+								"serverName": "^\"Please enter the name of the server to debug.\"",
+								"serverAddress": "^\"Please enter the address of the 'mfcs-mp' or 'soap' listener for the server. eg tcp:127.0.0.1:<nnn>.\""
+							}
+						}
+					},
+					{
+						"label": "COBOL (native): Wait for attachment",
+						"description": "%debug.cobol.native.snippets.waitForAttach.description%",
+						"body": {
+							"type": "cobol",
+							"request": "launch",
+							"name": "COBOL (native): Wait for attachment",
+							"waitForAttachment": {
+								"any": {}
+							}
+						}
+					},
+					{
+						"label": "COBOL: (debugCurrentFile)",
+						"description": "%debug.cobol.native.snippets.debugCurrentProgram.description%",
+						"body": {
+							"type": "cobol",
+							"request": "launch",
+							"name": "COBOL: (debugCurrentFile)",
+							"program": "^\"\\${workspaceFolder}/\\${fileBasenameNoExtension}.int\"",
+							"cwd": "^\"\\${workspaceFolder}\"",
+							"stopOnEntry": true
+						}
+					}
+				]
+			},
+			{
+				"type": "coboljvm",
+				"label": "COBOL: (JVM)",
+				"languages": [
+					"cobol"
+				],
+				"variables": {
+					"SpecifyProgramArgs": "mfcobol.coboljvm.debug.SpecifyProgramArgs"
+				},
+				"configurationAttributes": {
+					"launch": {
+						"required": [
+							"mainClass"
+						],
+						"properties": {
+							"projectName": {
+								"type": "string",
+								"description": "%debug.cobol.jvm.properties.launch.projectName.description%",
+								"default": ""
+							},
+							"mainClass": {
+								"type": "string",
+								"description": "%debug.cobol.jvm.properties.launch.mainClass.description%",
+								"default": ""
+							},
+							"args": {
+								"type": [
+									"array",
+									"string"
+								],
+								"description": "%debug.cobol.jvm.properties.launch.args.description%",
+								"default": ""
+							},
+							"vmArgs": {
+								"type": [
+									"array",
+									"string"
+								],
+								"description": "%debug.cobol.jvm.properties.launch.vmArgs.description%",
+								"default": ""
+							},
+							"modulePaths": {
+								"type": "array",
+								"items": {
+									"anyOf": [
+										{
+											"enum": [
+												"$Auto",
+												"$Runtime",
+												"$Test",
+												"!<path>"
+											],
+											"enumDescriptions": [
+												"%debug.cobol.jvm.properties.launch.modulePaths.auto%",
+												"%debug.cobol.jvm.properties.launch.modulePaths.runtime%",
+												"%debug.cobol.jvm.properties.launch.modulePaths.test%",
+												"%debug.cobol.jvm.properties.launch.modulePaths.exclude%"
+											]
+										},
+										"string"
+									]
+								},
+								"description": "%debug.cobol.jvm.properties.launch.modulePaths.description%",
+								"default": []
+							},
+							"classPaths": {
+								"type": "array",
+								"items": {
+									"anyOf": [
+										{
+											"enum": [
+												"$Auto",
+												"$Runtime",
+												"$Test",
+												"!<path>"
+											],
+											"enumDescriptions": [
+												"%debug.cobol.jvm.properties.launch.classPaths.auto%",
+												"%debug.cobol.jvm.properties.launch.classPaths.runtime%",
+												"%debug.cobol.jvm.properties.launch.classPaths.test%",
+												"%debug.cobol.jvm.properties.launch.classPaths.exclude%"
+											]
+										},
+										"string"
+									]
+								},
+								"description": "%debug.cobol.jvm.properties.launch.classPaths.description%",
+								"default": []
+							},
+							"sourcePaths": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								},
+								"description": "%debug.cobol.jvm.properties.launch.sourcePaths.description%",
+								"default": []
+							},
+							"cwd": {
+								"type": "string",
+								"description": "%debug.cobol.jvm.properties.launch.cwd.description%",
+								"default": "${workspaceFolder}"
+							},
+							"env": {
+								"type": "object",
+								"description": "%debug.cobol.jvm.properties.launch.env.description%",
+								"default": {}
+							},
+							"stopOnEntry": {
+								"type": "boolean",
+								"description": "%debug.cobol.jvm.properties.launch.stopOnEntry.description%",
+								"default": true
+							}
+						}
+					}
+				},
+				"configurationSnippets": [
+					{
+						"label": "COBOL (JVM): Launch Program",
+						"description": "%debug.cobol.jvm.snippet.launch.description%",
+						"body": {
+							"type": "coboljvm",
+							"name": "Launch COBOL JVM Program",
+							"request": "launch",
+							"mainClass": ""
+						}
+					},
+					{
+						"label": "COBOL (JVM): Launch Program in Current File",
+						"description": "%debug.cobol.jvm.snippet.launchCurrentFile.description%",
+						"body": {
+							"type": "coboljvm",
+							"name": "Launch Current File",
+							"request": "launch",
+							"mainClass": "^\"\\${file}\""
+						}
+					},
+					{
+						"label": "COBOL (JVM): Launch Program with Arguments Prompt",
+						"description": "%debug.cobol.jvm.snippet.launchWithArgumentsPrompt.description%",
+						"body": {
+							"type": "coboljvm",
+							"name": "Launch with Arguments Prompt",
+							"request": "launch",
+							"mainClass": "",
+							"args": "^\"\\${command:SpecifyProgramArgs}\""
+						}
+					}
+				]
+			}
+		],
+		"views": {
+			"debug": [
+				{
+					"id": "watchpointView",
+					"name": "Watchpoints",
+					"when": "mfcobol.breakpointsView && debugType != 'coreclr' && debugType != 'coboljvm'"
+				},
+				{
+					"id": "programBreakpointView",
+					"name": "Program Breakpoints",
+					"when": "mfcobol.breakpointsView && debugType != 'coreclr' && debugType != 'coboljvm'"
+				}
+			]
+		},
+		"viewsWelcome": [
+			{
+				"view": "workbench.explorer.emptyView",
+				"contents": "%viewsWelcome.explorer.content%"
+			},
+			{
+				"view": "debug",
+				"when": "workbenchState == empty",
+				"contents": "%viewsWelcome.debug.content%"
+			}
+		],
+		"jsonValidation": [
+			{
+				"fileMatch": "microFocusBreakpoints.json",
+				"url": "./schemas/microFocusBreakpoints-schema.json"
+			},
+			{
+				"fileMatch": "*.cblnb",
+				"url": "./schemas/cobolNotebooks-schema.json"
+			}
+		],
+		"snippets": [
+			{
+				"language": "cobol",
+				"path": "./snippets/cobolSnippets.json"
+			}
+		],
+		"terminal": {
+			"profiles": [
+				{
+					"id": "mfcobol.terminal",
+					"title": "Micro Focus COBOL"
+				}
+			]
+		},
+		"notebooks": [
+			{
+				"id": "mfcobol-notebook",
+				"type": "mfcobol-notebook",
+				"displayName": "%notebooks.displayName%",
+				"selector": [
+					{
+						"filenamePattern": "*.cblnb"
+					}
+				]
+			}
+		]
+	},
+	"scripts": {
+		"build-interop": "cd ../local_modules/mfcobol-interop && npm install && npm run compile",
+		"build-testutils": "cd ../local_modules/mf-vscode-test && npm install && npm run compile",
+		"preinstall": "npm run build-interop && npm run build-testutils",
+		"vscode:prepublish": "npm run compile-release && npm run package-web && npm run get-dependencies",
+		"compile": "webpack --mode development --config ./webpack.desktop.js && tsc -p ./",
+		"compile-release": "webpack --mode production --no-devtool --config ./webpack.desktop.js",
+		"lint": "eslint --ext ts src",
+		"lint-fix": "eslint --ext ts --fix src",
+		"watch": "webpack --watch --mode development --config ./webpack.desktop.js",
+		"test": "mfvscodetest",
+		"get-dependencies": "node --experimental-modules ./get-dependencies.mjs",
+		"package": "mkdirp ../cobdir/Release/vscode.vsix && vsce package -o ../cobdir/Release/vscode.vsix/mfvscode.vsix",
+		"prepackage-testware": "npm run compile && npm run compile-web",
+		"package-testware": "copyfiles --all -e \"../local_modules/*/node_modules/**/*\" \"./out/**/*\" \"./webout/**/*\" \"./tokens/**/*\" ./package.json ./package-lock.json ./copy-webtestdata.mjs ./prepare-web-testcat.mjs \"./snippets/*\" \"./src/test/testdata/**/*\" \"./src/test/suites/**/testdata/**/*\" \"../local_modules/**/*\" ../cobdir/ReleaseInternal/testware/core/extension",
+		"compile-web": "webpack --config ./webpack.browser.js",
+		"watch-web": "webpack --watch --config ./webpack.browser.js",
+		"package-web": "webpack --mode production --devtool hidden-source-map --config ./webpack.browser.js",
+		"copy-web-testdata": "node --experimental-modules ./copy-webtestdata.mjs",
+		"test-web": "npm run copy-web-testdata && mfvscodetest --web --browserType=chromium --quality=stable --extensionDevelopmentPath=. --extensionTestsPath=webout/test/suites/index.js",
+		"test-web-junit": "npm run copy-web-testdata && mfvscodetest --web --maxRunTime=900 --browserType=chromium --quality=stable --extensionDevelopmentPath=. --extensionTestsPath=webout/test/suites/index.js --junitReportFile=results/webresults.xml",
+		"markdown-lint": "markdownlint **/*.md --ignore node_modules",
+		"markdown-lint-fix": "markdownlint **/*.md --ignore node_modules --fix"
+	},
+	"devDependencies": {
+		"@types/node": "^18.11.10",
+		"@types/vscode": "^1.73.0",
+		"@types/webpack-env": "^1.18.0",
+		"@typescript-eslint/eslint-plugin": "^5.45.0",
+		"@typescript-eslint/parser": "^5.45.0",
+		"@vscode/debugadapter": "^1.58.0",
+		"@vscode/l10n": "^0.0.16",
+		"@vscode/vsce": "^2.19.0",
+		"assert": "^2.0.0",
+		"copyfiles": "^2.4.1",
+		"eslint": "^8.29.0",
+		"extract-zip": "^2.0.1",
+		"got": "^12.5.3",
+		"markdownlint": "^0.28.1",
+		"markdownlint-cli": "^0.33.0",
+		"mf-vscode-test": "file:../local_modules/mf-vscode-test",
+		"mfcobol-interop": "file:../local_modules/mfcobol-interop",
+		"mkdirp": "^1.0.4",
+		"process": "^0.11.10",
+		"raw-loader": "^4.0.2",
+		"ts-loader": "^9.4.2",
+		"typescript": "^4.9.3",
+		"vscode-languageclient": "^8.0.2",
+		"vscode-languageserver": "^8.0.2",
+		"vscode-languageserver-textdocument": "^1.0.8",
+		"vscode-uri": "^3.0.7",
+		"webpack": "^5.80.0",
+		"webpack-cli": "^5.0.2",
+		"xunit-viewer": "^7.2.0"
+	},
+	"dependencies": {
+		"vscode-windows-registry": "file:../local_modules/vscode-windows-registry"
+	},
+	"__metadata": {
+		"id": "39c0b7af-ea2d-4a07-90a0-70781da7eb3e",
+		"publisherId": "c692c038-e3cb-4b44-a14f-f0e87270c7fd",
+		"publisherDisplayName": "OpenText (previously Micro Focus)",
+		"targetPlatform": "undefined",
+		"isApplicationScoped": false,
+		"updated": true,
+		"isPreReleaseVersion": false,
+		"installedTimestamp": 1694030426469,
+		"preRelease": false
+	}
+}

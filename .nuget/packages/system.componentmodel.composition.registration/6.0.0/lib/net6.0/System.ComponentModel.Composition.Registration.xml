@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>System.ComponentModel.Composition.Registration</name>
+    </assembly>
+    <members>
+        <member name="P:System.SR.Registration_ConstructorConventionOverridden">
+            <summary>A constructor selection convention that would apply to Type '{0}' has been overridden by attributes applied in the source file or by a prior convention.</summary>
+        </member>
+        <member name="P:System.SR.Registration_TypeExportConventionOverridden">
+            <summary>An Export specification convention that would apply to type '{0}' has been overridden by attributes applied in the source file or by a prior convention.</summary>
+        </member>
+        <member name="P:System.SR.Registration_MemberExportConventionOverridden">
+            <summary>An Export specification convention that would apply to Member '{0}' of type '{1}' has been overridden by attributes applied in the source file or by a prior convention.</summary>
+        </member>
+        <member name="P:System.SR.Registration_MemberImportConventionOverridden">
+            <summary>An Import specification convention that would apply to Member '{0}' of type '{1}' has been overridden by attributes applied in the source file or by a prior convention.</summary>
+        </member>
+        <member name="P:System.SR.Registration_MemberImportConventionMatchedTwice">
+            <summary>Only one import specification convention can apply to a single Member. More than one convention specification applies to this Member '{0}' of Type '{1}'.</summary>
+        </member>
+        <member name="P:System.SR.Registration_ParameterImportConventionOverridden">
+            <summary>A ParameterImport specification convention that would apply to Parameter '{0}' of Constructor '{1}' has been overridden by attributes applied in the source file or by a prior convention.</summary>
+        </member>
+        <member name="P:System.SR.Registration_PartCreationConventionOverridden">
+            <summary>A PartCreationPolicy specification convention that would apply to Type '{0}' has been overridden by attributes applied in the source file or by a prior convention.</summary>
+        </member>
+        <member name="P:System.SR.Registration_PartMetadataConventionOverridden">
+            <summary>A PartMetadata specification convention that would apply to Type '{0}' has been overridden by attributes applied in the source file or by a prior convention.</summary>
+        </member>
+        <member name="P:System.SR.Diagnostic_InternalExceptionMessage">
+            <summary>Internal error occurred.</summary>
+        </member>
+        <member name="P:System.SR.Argument_ExpressionMustBeNew">
+            <summary>The value of argument '{0}' is not supported.  The expression must use operator new.</summary>
+        </member>
+        <member name="P:System.SR.Argument_ExpressionMustBePropertyMember">
+            <summary>The value of argument '{0}' is not supported.  The expression must be a property member expression.</summary>
+        </member>
+        <member name="P:System.SR.Diagnostic_TraceUnnecessaryWork">
+            <summary>To avoid unnecessary work when a trace level has not been enabled, check CanWriteXXX before calling this method.</summary>
+        </member>
+        <member name="P:System.SR.PlatformNotSupported_ComponentModel_Composition_Registration">
+            <summary>System.ComponentModel.Composition.Registration APIs are not supported on this platform.</summary>
+        </member>
+        <member name="P:System.SR.Registration_OnSatisfiedImportNotificationOverridden">
+            <summary>A OnSatisfiedImports specification convention that would apply to Type '{0}' has been overridden by attributes applied in the source file or by a prior convention.</summary>
+        </member>
+    </members>
+</doc>

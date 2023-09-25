@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Rule Name="AppDesigner"
+      PageTemplate="generic"
+      xmlns="http://schemas.microsoft.com/build/2009/properties">
+  <Rule.DataSource>
+    <DataSource Label="Configuration"
+                Persistence="ProjectFile"
+                SourceOfDefaultValue="AfterContext" />
+  </Rule.DataSource>
+
+  <BoolProperty Name="ContentsVisibleOnlyInShowAllFiles"
+                Default="false"
+                ReadOnly="true"
+                Visible="false">
+    <BoolProperty.DataSource>
+      <DataSource HasConfigurationCondition="false"
+                  PersistedName="AppDesignerFolderContentsVisibleOnlyInShowAllFiles"
+                  Persistence="ProjectFile"
+                  SourceOfDefaultValue="AfterContext" />
+    </BoolProperty.DataSource>
+  </BoolProperty>
+
+  <StringProperty Name="FolderName"
+                  Default="Properties"
+                  Visible="false">
+    <StringProperty.DataSource>
+      <DataSource HasConfigurationCondition="false"
+                  PersistedName="AppDesignerFolder"
+                  Persistence="ProjectFile"
+                  SourceOfDefaultValue="AfterContext" />
+    </StringProperty.DataSource>
+  </StringProperty>
+
+</Rule>

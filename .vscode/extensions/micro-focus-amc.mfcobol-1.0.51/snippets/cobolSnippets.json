@@ -1,0 +1,742 @@
+{
+    "accept date": {
+        "prefix": "accept",
+        "body": "accept ${1:DateItem} from date",
+        "description": "Code snippet for the accept from date statement."
+    },
+    "accept time": {
+        "prefix": "accept",
+        "body": "accept ${1:TimeItem} from time",
+        "description": "Code snippet for the accept from time statement."
+    },
+    "attribute": {
+        "prefix": "attribute",
+        "body": [
+            "class-id ${1:My}Attribute inherits type Attribute final",
+            "attribute AttributeUsage(type System.AttributeTargets::${2:All}, name Inherited = ${3:false}, name AllowMultiple = ${4:true}).",
+            "",
+            "working-storage section.",
+            "01 positionalString string private.",
+            "01 NamedInt binary-long property.",
+            "01 notImplemented type NotImplementedException value new NotImplementedException() private.",
+            "",
+            "*> This is a positional argument",
+            "method-id new.",
+            "procedure division using by value positionalString As string.",
+            "  set self::positionalString to positionalString",
+            "",
+            "  *> TODO: Implement code here",
+            "  raise notImplemented",
+            "end method.",
+            "",      
+            "method-id get property PositionalString public.",
+            "procedure division returning ret as string.",
+            "  set ret to positionalString",
+            "end method.",
+            "",
+            "end class."            
+        ],
+        "description": "Code snippet for the attribute syntax."
+    },
+    "constant": {
+        "prefix": "const",
+        "body": [
+            "78 ${1:constName} value \"${2:constValue}\"."
+        ],
+        "description": "Code snippet for a level 78 constant."
+    },
+    "class": {
+        "prefix": "class",
+        "body": [
+            "class-id ${1:MyClass}.",
+            "",
+            "working-storage section.",
+            "$TM_SELECTED_TEXT",
+            "method-id InstanceMethod.",
+            "local-storage section.",
+            "procedure division.",
+            "",
+            "    goback.",
+            "end method.",
+            "",
+            "end class."
+        ],
+        "description": "Code snippet for the class syntax."
+    },
+    "create collection": {
+        "prefix": "create",
+        "body": [
+            "create ${1:generic-List}"
+        ],
+        "description": "Code snippet for the create collection statement."
+    },
+    "declare (native)": {
+        "prefix": "declare",
+        "body": [
+            "declare ${1:myVariable} as ${2|binary-char,binary-double,binary-long,binary-short,float-long,float-short|}"             
+        ],
+        "description": "Code snippet for the declare statement for native code."
+    },
+    "declare": {
+        "prefix": "declare",
+        "body": [
+            "declare ${1:myVariable} as type ${2:Object}"
+        ],
+        "description": "Code snippet for the declare statement."
+    },    
+    "delegate": {
+        "prefix": "delegate",
+        "body": [
+            "delegate-id ${1:MyDelegate}.",
+            "",
+            "procedure division.",
+            "",
+            "end delegate."
+        ],
+        "description": "Code snippet for the delegate syntax."
+    },
+    "delete collection": {
+        "prefix": "delete",
+        "body": [
+            "delete ${1:generic-list} key ${2:list-key}"
+        ],
+        "description": "Code snippet for the delete collection statement."
+    },
+    "dialect": {
+        "prefix": "$set dialect",
+        "body": [
+            "\\$set dialect(${1|MF,COBOL371,VSC24,VSC23,VSC22,OSVS,DOSVS,OS390,ENTCOBOL,MVS|})"
+        ],
+        "description": "Code snippet for selecting the COBOL dialect."
+    },
+    "display": {
+        "prefix": "display",
+        "body": [
+            "display \"${1:message}\""
+        ],
+        "description": "Code snippet for display statement."
+    },
+    "$display": {
+        "prefix": "$display",
+        "body": [
+            "\\$display ${1:message}"
+        ],
+        "description": "Code snippet for $display statement."
+    },
+    "entry": {
+        "prefix": "entry",
+        "description": "Code snippet for the entry statement.",
+        "body": [
+            "entry '${1:entryName}'.",
+            "$TM_SELECTED_TEXT",
+            "goback",
+            "."
+        ]
+    },
+    "enum-id": {
+        "prefix": "enum",
+        "description": "Code snippet for the enum syntax.",
+        "body": [
+            "enum-id ${1:MyEnum}",
+            "working-storage section.",
+            "${2:01 binary-long.} *> Underlying type for the enum",
+            "\t${3:78 my-value value 1.} *> Declare enum values as level 78 items",
+            "end enum."
+        ]
+    },
+    "evaluate": {
+        "prefix": "evaluate",
+        "description": "Code snippet for the evaluate statement.",
+        "body": [
+            "evaluate ${1:evaluateItem}",
+            "\twhen true",
+            "\t\tcontinue",
+            "\twhen other",
+            "\t\tcontinue",
+            "end-evaluate"
+        ]
+    },
+    "if": {
+        "prefix": "if",
+        "description": "Code snippet for the if statement.",
+        "body": [
+            "if ${1:condition} then",
+            "$TM_SELECTED_TEXT",
+            "else",
+            "",
+            "end-if"
+        ]
+    },
+    "implements": {
+        "prefix": "implements",
+        "description": "Code snippet for the implements keyword.",
+        "body": [
+            "implements type ${1:name}.",
+            "*> Implementation goes here"
+        ]
+    },
+    "indexer": {
+        "prefix": "indexer",
+        "description": "Code snippet for an indexer with get and set accessors .",
+        "body": [
+            "indexer-id ${1:string} (i as ${1:binary-long}).",
+            "getter.",
+            "*>    set property-value to myArray[i]",
+            "",
+            "setter.",
+            "*>    set myArray[i] to property-value",
+            "",
+            "end indexer."
+        ]
+    },
+    "inspect replacing": {
+        "prefix": "inspect",
+        "description": "Code snippet for the inspect replacing statement.",
+        "body": [
+            "inspect ${1:itemName} replacing ${2:A} by ${3:B}"
+        ]
+    },
+    "inspect tallying": {
+        "prefix": "inspect",
+        "description": "Code snippet for the inspect tallying statement.",
+        "body": [
+            "move 0 to ${1:count-0}",
+            "inspect ${2:textItem} tallying ${1:count-0} for characters before initial ${3:' '}"
+        ]
+    },
+
+    "interface-id": {
+        "prefix": "interface",
+        "description": "Code snippet for the interface syntax.",
+        "body": [
+            "interface-id $:{1:interface-name}.",
+            "",
+            "\tmethod-id ${2:methodName}.",
+            "\tprocedure division.",
+            "\tend method.",
+            "end interface."
+        ]
+    },
+    "iterator-id": {
+        "prefix": "iterator",
+        "description": "Code snippet for the iterator syntax.",
+        "body": [
+            "iterator-id ${1:iteratorName} static.",
+            "",
+            "working-storage section.",
+            "",       
+            "procedure division yielding ${2:elementName} as ${3|binary-char unsigned,binary-char,binary-short,binary-long,binary-double,binary-short unsigned,binary-long unsigned,binary-double unsigned,float-short,float-long,condition-value,string,object,type|.",
+            "\tperform until false",
+            "\t\tstop iterator",
+            "\t\tgoback",
+            "\tend-perform",
+            "", 
+            "end iterator."
+        ]
+    },
+    "string literal": {
+        "prefix": "pic",
+        "description": "Code snippet for a string literal item.",
+        "body": [
+            "01 ${1:picName}",
+            "\t03 ${1:picName}-pic pic X(1024).",
+            "\t03 ${1:picName}-len pic X(2) comp-5."
+        ]
+    },
+    "date string": {
+        "prefix": "datestring",
+        "description": "Code snippet for setting a date string to the locale format.",
+        "body": [
+            "set ${1:MyDateString} to type DateTime::Today::ToString(new System.Globalization.CultureInfo(\"${2|af,af-ZA,sq,sq-AL,ar,ar-DZ,ar-BH,ar-EG,ar-IQ,ar-JO,ar-KW,ar-LB,ar-LY,ar-MA,ar-OM,ar-QA,ar-SA,ar-SY,ar-TN,ar-AE,ar-YE,hy,hy-AM,az,az-AZ-Cyrl,az-AZ-Latn,eu,eu-ES,be,be-BY,bg,bg-BG,ca,ca-ES,zh-HK,zh-MO,zh-CN,zh-CHS,zh-SG,zh-TW,zh-CHT,hr,hr-HR,cs,cs-CZ,da,da-DK,div,div-MV,nl,nl-BE,nl-NL,en,en-AU,en-BZ,en-CA,en-CB,en-IE,en-JM,en-NZ,en-PH,en-ZA,en-TT,en-GB,en-US,en-ZW,et,et-EE,fo,fo-FO,fa,fa-IR,fi,fi-FI,fr,fr-BE,fr-CA,fr-FR,fr-LU,fr-MC,fr-CH,gl,gl-ES,ka,ka-GE,de,de-AT,de-DE,de-LI,de-LU,de-CH,el,el-GR,gu,gu-IN,he,he-IL,hi,hi-IN,hu,hu-HU,is,is-IS,id,id-id,it,it-IT,it-CH,ja,ja-JP,kn,kn-IN,kk,kk-KZ,kok,kok-IN,ko,ko-KR,ky,ky-KZ,lv,lv-LV,lt,lt-LT,mk,mk-MK,ms,ms-BN,ms-MY,mr,mr-IN,mn,mn-MN,no,nb-NO,nn-NO,pl,pl-PL,pt,pt-BR,pt-PT,pa,pa-IN,ro,ro-RO,ru,ru-RU,sa,sa-IN,sr-SP-Cyrl,sr-SP-Latn,sk,sk-SK,sl,sl-SI,es,es-AR,es-BO,es-CL,es-CO,es-CR,es-DO,es-EC,es-SV,es-GT,es-HN,es-MX,es-NI,es-PA,es-PY,es-PE,es-PR,es-ES,es-UY,es-VE,sw,sw-KE,sv,sv-FI,sv-SE,syr,syr-SY,ta,ta-IN,tt,tt-RU,te,te-IN,th,th-TH,tr,tr-TR,uk,uk-UA,ur,ur-PK,uz,uz-UZ-Cyrl,uz-UZ-Latn,vi,vi-VN|\", false)::DateTimeFormat::ShortDatePattern)"
+        ]
+    },
+    "method static": {
+        "prefix": "method",
+        "description": "Code snippet for a static method.",
+        "body": [
+            "method-id ${1:methodName} ${2|public,internal,private,protected|} static.",
+            "",
+            "\tlocal-storage section.",
+            "\t",
+            "\tprocedure division.",
+            "\t",
+            "\t\tgoback.",
+            "end method."
+        ]
+    },
+    "method": {
+        "prefix": "method",
+        "description": "Code snippet for an instance method.",
+        "body": [
+            "method-id ${1:methodName} ${2|public,internal,private,protected|}.",
+            "",
+            "local-storage section.",
+            "",
+            "procedure division.",
+            "",
+            "    goback.",
+            "end method."
+        ]
+    },
+    "paragraph": {
+        "prefix": "paragraph",
+        "description": "Code snippet for a paragraph header.",
+        "body": [
+            "${1:paragraphName}.",
+            "$TM_SELECTED_TEXT",
+            "."
+        ]
+    },  
+    "perform varying (native)": {
+        "prefix": "perform",
+        "description": "Code snippet for a perform varying... loop statement for native code.",
+        "body": [
+            "perform varying i from 1 by 1 until i > ${1:max-index}",
+            "$TM_SELECTED_TEXT",
+            "end-perform"
+        ]
+    },
+    "perform varying dictionary (.NET)": {
+        "prefix": "perform",
+        "description": "Code snippet for a perform varying... loop statement that uses a dictionary object for .NET COBOL code.",
+        "body": [
+            "perform varying value ${1:v} as ${2:string} key ${3:keyName} as ${4:keyType} thru ${5:dictionaryName}",
+            "$TM_SELECTED_TEXT",
+            "end-perform"
+        ]
+    },
+    "perform varying thru (.NET)": {
+        "prefix": "perform",
+        "description": "Code snippet for a perform varying... loop statement that uses a collection object for .NET COBOL code.",
+        "body": [
+            "perform varying x as ${1:element-type} thru ${2:collection-name}",
+            "$TM_SELECTED_TEXT",
+            "end-perform"
+        ]
+    },
+    "perform varying (.NET)": {
+        "prefix": "perform",
+        "description": "Code snippet for a perform varying... loop statement for .NET COBOL code.",
+        "body": [
+            "perform varying i as binary-long from 1 by 1 until i > ${1:max-index}",
+            "$TM_SELECTED_TEXT",
+            "end-perform"
+        ]
+    },
+    "perform with test after": {
+        "prefix": "performtestafter",
+        "description": "Code snippet for a perform with test after... loop.",
+        "body": [
+            "perform with test after until ${1:condition}",
+            "$TM_SELECTED_TEXT",
+            "end-perform"
+        ]
+    },
+    "perform with test after varying (native)": {
+        "prefix": "performtestafter",
+        "description": "Code snippet for a perform with test after varying... loop for native code.",
+        "body": [ 
+            "perform with test after varying i from 1 by 1",
+            "\tuntil i > ${1:max-index}",
+            "$TM_SELECTED_TEXT",
+            "end-perform"
+        ]
+    },
+    "perform with test after varying (.NET)": {
+        "prefix": "performtestafter",
+        "description": "Code snippet for a perform with test after varying... loop for .NET COBOL code.",
+        "body": [
+            "perform with test after varying i as binary-long from 1 by 1",
+            "\tuntil i > ${1:max-index}",
+            "$TM_SELECTED_TEXT",
+            "end-perform"
+        ]
+    },
+    "pic": {
+        "prefix": "pic",
+        "description": "Code snippet for declaring a picture item.",
+        "body": [
+            "${1|01,03,05,07,09|} ${2:picName} pic ${3|X,S|}(${4:picLength}) ${5|value spaces,value zeroes,comp-x,comp-5|}."
+        ]
+    },
+    "program-id (.NET)": {
+        "prefix": "program-id",
+        "description": "Code snippet for a .NET COBOL program.",
+        "body": [
+            "program-id. ${1:programIDName} as \"${2:namespace}.${1:programIDName}\".",
+            "",
+            "environment division.",
+            "configuration section.",
+            "",
+            "data division.",
+            "working-storage section.",
+            "",
+            "procedure division.",
+            "\t$0",
+            "\tgoback.",
+            "",
+            "end program ${1:programIDName}."
+        ]
+    },
+    "program-id": {
+        "prefix": "program-id",
+        "description": "Code snippet for a program.",
+        "body": [
+            "identification division.",
+            "program-id. ${1:programIDName}.",
+            "",
+            "environment division.",
+            "configuration section.",
+            "",
+            "data division.",
+            "working-storage section.",
+            "",
+            "procedure division.",
+            "\t$0",
+            "\tgoback.",
+            "",
+            "end program ${1:programIDName}."
+        ]
+    },
+    "program-id with indexed file": {
+        "prefix": "program-id-indexed",
+        "description": "Code snippet for a program with an indexed file.",
+        "body": [
+            "program-id. ${1:programIDName}.",
+            "",
+            "environment division.",
+            "configuration section.",
+            "select ${2:filename} assign ${3:file-name}",
+            "\torganization indexed",
+            "\trecord key is ${4:f-code} with no duplicates",
+            "\tfile status is ${5:file-status}",
+            "\taccess dynamic.",
+            "",
+            "data division.",
+            "fd ${2:filename}.",
+            "01 ${6:f-rec}.",
+            "\t03 ${4:f-code}                       pic x(${7:4}).",
+            "",
+            "working-storage section.",
+            "01 ${5:file-status}.",
+            "\t03 ${5:file-status}-key-1        pic x.",
+            "\t03 ${5:file-status}-key-2        pic x.",
+            "\t03 binary-status redefines ${5:file-status}-key-2 pic 99 comp-x.",
+            "", 
+            "procedure division.",
+            "",
+            "\tgoback.",
+            "",
+            "end program ${1:programIDName}."
+          ]
+    },
+     "program-id with line sequential file": {
+        "prefix": "program-id-ls",
+        "description": "Code snippet for a program with a line sequential file.",
+        "body": [
+            "program-id. ${1:programIDName}.",
+            "",
+            "environment division.",
+            "configuration section.",
+            "select ${2:filename} assign ${3:file-name}",
+            "\torganization is line sequential",
+            "\tfile status is ${4:file-status}.",
+            "",
+            "data division.",
+            "fd ${2:filename}.",
+            "01 ${5:f-rec}                       pic x(${6:80}).",
+            "",
+            "working-storage section.",
+            "01 ${4:file-status}.",
+            "\t03 ${4:file-status}-key-1        pic x.",
+            "\t03 ${4:file-status}-key-2        pic x.",
+            "\t03 binary-status redefines ${4:file-status}-key-2 pic 99 comp-x.",
+            "", 
+            "procedure division.",
+            "",
+            "\tgoback.",
+            "",
+            "end program ${1:programIDName}."
+          ]
+    },
+    "program-id with relative file": {
+        "prefix":"program-id-relative",
+        "description":"Code snippet for a program with a relative file.",
+        "body": [
+            "program-id. ${1:programIDName}.",
+            "",
+            "environment division.",
+            "configuration section.",
+            "select ${2:filename} assign ${3:file-name}",
+            "\torganization is relative",
+            "\taccess is ${4:random}",
+            "\trelative key is ${5:relfil-key}",
+            "\tfile status is ${6:file-status}.",
+            "",
+            "data division.",
+            "fd ${2:filename}.",
+            "01 ${7:f-rec}                       pic x(${8:80}).",
+            "",
+            "working-storage section.",
+            "01 ${5:relfil-key}                  pic 9(${9:8}) comp-x.",
+            "01 ${6:file-status}.",
+            "\t03 ${6:file-status}-key-1        pic x.",
+            "\t03 ${6:file-status}-key-2        pic x.",
+            "\t03 binary-status redefines ${6:file-status}-key-2 pic 99 comp-x.",
+            "",
+            "procedure division.",
+            "",
+            "\tgoback.",
+            "",
+            "end program ${1:programIDName}."
+        ]
+    },
+    "property": {
+        "prefix": "property",
+        "description": "Code snippet for a property with get and set accessors.",
+        "body": [
+            "property-id ${1:MyProperty} ${2:string}.",
+            "getter.",
+            "*>    set property-value to my-field",
+            "\t",
+            "setter.",
+            "*>    set my-field to property-value",
+            "",
+            "end property."
+        ]
+    },
+    "read file": {
+        "prefix": "readfile",
+        "description": "Code snippet for reading a record from a file.",
+        "body": [
+            "read ${1:file-name} into ${2:data-items}"           
+        ]
+    },
+    "read collection": {
+        "prefix": "read",
+        "description": "Code snippet for the read collection statement.",
+        "body": [
+            "read ${1:generic-list} into ${2:list-element} key ${3:list-key}"           
+        ]
+    },
+    "rewrite collection": {
+        "prefix": "rewrite",
+        "description": "Code snippet for the rewrite collection statement.",
+        "body": [
+            "rewrite ${1:generic-list} ${2:list-element} key ${3:list-key}"
+        ]
+    },
+    "reset collection": {
+        "prefix": "reset",
+        "description": "Code snippet for the reset collection statement.",
+        "body": [
+            "reset ${1:generic-list}"
+        ]
+    },
+    "section": {
+        "prefix": "section",
+        "description": "Code snippet for a section header.",
+        "body": [
+            "${1:sectionName} section.",
+            "$TM_SELECTED_TEXT",
+            "."
+        ]
+    },
+    "set new": {
+        "prefix": "setnew",
+        "description": "Code snippet for a set new object statement.",
+        "body": [
+            "set ${1:variableName} to new ${2:Object-Class}"
+        ]
+    },
+    "test case": {
+        "prefix": "testcase",
+        "description": "Code snippet for a test case entry point statement.",
+        "body": [
+            "entry MFU-TC-PREFIX & ${1:TestCase}.",
+            "$TM_SELECTED_TEXT",
+            "*> Test code goes here.",
+            "goback returning MFU-PASS-RETURN-CODE",
+            "."
+        ]
+    },
+    "test data": {
+        "prefix": "testdata",
+        "description": "Code snippet for a test meta data entry point statement.",
+        "body": [
+            "entry MFU-TC-METADATA-SETUP-PREFIX & ${1:TestCase}.  *> the test case meta data",
+            "\tmove \"This is a example of a dynamic description\" to mfu-md-testcase-description",
+            "\tmove 10000 to MFU-MD-TIMEOUT-IN-MS",
+            "\tmove \"smoke,dynmeta\" to MFU-MD-TRAITS",
+            "\tset MFU-MD-SKIP-TESTCASE to false",
+            "$TM_SELECTED_TEXT",
+            "\tgoback returning 0",
+            "."
+        ]
+    },
+    "test setup": {
+        "prefix": "testup",
+        "description": "Code snippet for a test setup entry point statement.",
+        "body": [
+            "entry MFU-TC-SETUP-PREFIX & ${1:TestCase}. *> the test case setup",
+            "$TM_SELECTED_TEXT",
+            "\tgoback returning 0",
+            "." 
+           ]
+    },
+    "test tear down": {
+        "prefix": "testdown",
+        "description": "Code snippet for a test tear down entry point statement.",
+        "body": [
+            "entry MFU-TC-TEARDOWN-PREFIX & ${1:TestCase}. *> the test case teardown",
+            "$TM_SELECTED_TEXT",
+            "\tgoback returning 0",
+            "."            
+        ]
+    },
+    "try": {
+        "prefix": "try",
+        "description": "Code snippet for the try statement.",
+        "body": [
+            "try",
+            "\t*> try code",
+            "$TM_SELECTED_TEXT",
+            "catch e as type System.Exception",
+            "\t*> To catch a specific exception, specify the exception type in the CATCH above",
+            "\tdisplay e::Message",
+            "finally",
+            "\t*> finally code",
+            "\tcontinue",
+            "end-try"
+        ]
+    },
+    "valuetype": {
+        "prefix": "valuetype",
+        "description": "Code snippet for a valuetype syntax.",
+        "body": [
+            "valuetype-id ${1:MyValueType}.",
+            "",
+            "working-storage section.",
+            "$TM_SELECTED_TEXT",
+            "method-id InstanceMethod.",
+            "local-storage section.",
+            "procedure division.",
+            "",
+            "\tgoback.",
+            "end method.",
+            "",
+            "end valuetype."
+        ]
+    },
+    "write collection": {
+        "prefix": "write",
+        "description": "Code snippet for the write collection statement.",
+        "body": [
+            "write ${1:list-element} from ${2:list-key}"
+        ]
+    },
+    "write file": {
+        "prefix": "writefile",
+        "description": "Code snippet for writing a record to a file.",
+        "body": [
+            "write ${1:recordName} from ${2:identifier}"
+        ]
+    },
+    "xmlparse": {
+        "prefix": "xmlparse",
+        "description": "Code snippet for interfacing with an XML parser that is part of the COBOL run-time system",
+        "body": [
+            "xml parse ${1:identifier-1}",
+            "  processing procedure is ${2:procedure-name-1}"
+        ]
+    },
+    "$region": {
+        "prefix": "region",
+        "description": "Code snippet for creating a $region block that is collapsible in the IDE",
+        "body": [
+            "      \\$region ${1:regionName}",
+            "$TM_SELECTED_TEXT",
+            "      \\$end-region"
+        ]
+    },
+    "$if": {
+        "prefix": "ifcompile",
+        "description": "Code snippet for creating conditional compilation blocks.",
+        "body": [
+            "      \\$if ${1:condition}",
+            "$TM_SELECTED_TEXT",
+            "      \\$end"
+        ]
+    },
+    "delete file": {
+        "prefix": "deletefile",
+        "description": "Code snippet for deleting a file.",
+        "body": [
+            "delete ${1:file_name1}",
+            "  invalid key",
+            "  ${2:cursor}",
+            "  not invalid key",
+            "end-delete"
+        ]
+    },
+    "cblformat": {
+        "prefix": "cblformat",
+        "description": "Code snippet for a excluding the selected code from formatting.",
+        "body": [
+            "*> cblformat off",
+            "$TM_SELECTED_TEXT",
+            "*> cblformat on"
+        ]  
+    },
+    "sourceformat": {
+        "name": "sourceformat",
+        "prefix": "$set sourceformat()",
+        "description": "Code snippet for setting sourceformat.",
+        "body": [
+            "\\$set sourceformat(${1|variable,free,fixed|})"
+        ]
+    },
+    "xmlgenerate": {
+        "prefix": "xmlgenerate",
+        "description": "Code snippet for converting data to xml.",
+        "body": [
+            "xml generate ${1:indentifier-1} from ${2:identifier-2}"
+        ]
+    },
+    "sort file": {
+        "prefix": "sortfile",
+        "description": "Code snippet for sorting a file.",
+        "body": [
+            "sort ${1:file_name1}",
+            "  on ${2|ascending,descending|} ${3:identifier}",
+            "  using ${4:file_name2}",
+            "  giving ${5:file_name3}"
+        ]
+    },
+    "json parse": {
+        "prefix": "jsonparse",
+        "description": "Code snippet for json parse.",
+        "body": [
+            "json parse ${1:identifier1} into ${2:identifier2}",
+            "  detail",
+            "  name ${3:identifier3}",
+            "  suppress ${4:identifier4}",
+            "  exception ${5:statement1}",
+            "  not exception ${6:statement2}",
+            "end-json"
+        ]
+    },
+    "json generate": {
+        "prefix": "jsongenerate",
+        "description": "Code snippet for json generate.",
+        "body": [
+            "json generate ${1:identifier1} from ${2:identifier2}",
+            "  count ${3:identifier3}",
+            "  name ${4:identifier4}",
+            "  suppress ${5:identifier5}",
+            "  exception ${6:statement1}",
+            "  not exception ${7:statement2}",
+            "end-json"
+        ]
+    }
+}

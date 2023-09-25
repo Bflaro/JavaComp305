@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>MicroFocus.COBOL.Runtime</id>
+    <version>3.80.0</version>
+    <authors>Micro Focus</authors>
+    <owners>Micro Focus</owners>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <licenseUrl>https://www.microfocus.com/documentation/visual-cobol/vc-latest/VS2017/GUID-0562B3C9-2271-4CE8-AF64-93DE4940077F.html</licenseUrl>
+    <projectUrl>https://www.microfocus.com/</projectUrl>
+    <description>Micro Focus COBOL Runtime System</description>
+    <copyright>(C) Copyright 1984-2022 Micro Focus or one of its affiliates.</copyright>
+    <dependencies>
+      <group targetFramework="net6.0">
+        <dependency id="System.Security.Permissions" version="6.0.0" />
+        <dependency id="System.Configuration.ConfigurationManager" version="6.0.0" />
+        <dependency id="System.Text.Encoding.CodePages" version="6.0.0" />
+        <dependency id="Microsoft.Windows.Compatibility" version="6.0.0" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

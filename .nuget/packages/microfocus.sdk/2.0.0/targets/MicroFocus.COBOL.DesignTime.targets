@@ -1,0 +1,87 @@
+<!--
+ * 
+ * (C) Copyright 2022 Micro Focus or one of its affiliates.
+ *
+ * This file contains Visual Studio and designer-related properties and items for COBOL projects.
+ *
+-->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\Managed\Microsoft.Managed.DesignTime.targets')" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\Managed\Microsoft.Managed.DesignTime.targets" />
+
+  <!-- Properties -->
+  <PropertyGroup>
+    <AppDesignerFolder Condition="'$(AppDesignerFolder)' == ''">Properties</AppDesignerFolder>
+    <AppDesignerFolderContentsVisibleOnlyInShowAllFiles Condition="'$(AppDesignerFolderContentsVisibleOnlyInShowAllFiles)' == ''">false</AppDesignerFolderContentsVisibleOnlyInShowAllFiles>
+    <LanguageServiceName Condition="'$(LanguageServiceName)' == ''">COBOL</LanguageServiceName>
+    <LanguageServiceId Condition="'$(LanguageServiceId)'==''">{4F44FBEB-C636-4a66-832A-7662C91E137B}</LanguageServiceId>
+    <TemplateLanguage Condition="'$(TemplateLanguage)' == ''">COBOL</TemplateLanguage>
+    <DesignerFunctionVisibility Condition="'$(DesignerFunctionVisibility)' == ''">Private</DesignerFunctionVisibility>
+    <DesignerVariableNaming Condition="'$(DesignerVariableNaming)' == ''">Camel</DesignerVariableNaming>
+  
+    <!-- Turn off rules and capabilities that are defined in MSBuild so that we can import our own below -->
+    <DefineCOBOLItemSchemas>false</DefineCOBOLItemSchemas>
+  </PropertyGroup>
+
+  <!-- Describes the rules files used by CPS to represent the project -->
+  <PropertyGroup>
+    <RulesDirectory>$(MSBuildThisFileDirectory)Rules\$(LangName)</RulesDirectory>
+    <RulesDirectory Condition=" '$(LangName)' == '' OR !Exists($(RulesDirectory)) ">$(MSBuildThisFileDirectory)Rules</RulesDirectory>
+  </PropertyGroup>
+
+  <ItemGroup>
+
+    <!-- Exclude these pages -->
+    <!-- Build page - we supply own our 'COBOL' property page for the equivalent properties -->
+    <PropertyPageSchema Remove="$(ManagedXamlResourcesDirectory)BuildPropertyPage.xaml">
+    </PropertyPageSchema>
+
+    <!-- Code Analysis - Not relevant for COBOL projects -->
+    <PropertyPageSchema Remove="$(ManagedXamlResourcesDirectory)CodeAnalysisPropertyPage.xaml">
+    </PropertyPageSchema>
+
+    <!-- Copybooks Property page -->
+    <PropertyPageSchema Include="$(RulesDirectory)\PropertyPages\CopybookPathsPropertyPage.xaml">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+
+    <!-- COBOL Build Property page -->
+    <PropertyPageSchema Include="$(RulesDirectory)\PropertyPages\COBOLBuildPropertyPage.xaml">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+
+    <PropertyPageSchema Include="$(RulesDirectory)\ConfigurationGeneral.xaml">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+
+    <PropertyPageSchema Include="$(RulesDirectory)\ProjectItemsSchema.xaml">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectCapability Include="
+                          COBOL;
+                          AppDesigner;
+                          " />
+  </ItemGroup>
+
+  <!-- Targets -->
+
+  <!-- Returns COBOL command-line arguments for the language service -->
+  <Target Name="CompileDesignTime"
+          Returns="@(_CompilerCommandLineArgs);@(_COBCPY)"
+          Outputs="@(_COBCPY)"
+          DependsOnTargets="_CheckCompileDesignTimePrerequisite;Compile"
+          Condition="'$(IsCrossTargetingBuild)' != 'true'">
+
+    <ItemGroup>
+      <_CompilerCommandLineArgs Include="@(COBOLCommandLineArgs)"/>
+      <_COBCPY Include="@(COBCPY)" />
+    </ItemGroup>
+      
+  </Target>
+
+</Project>

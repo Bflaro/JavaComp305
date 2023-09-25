@@ -1,0 +1,26 @@
+{
+  "tokenizationInfo": {
+    "reservedKeywords": {
+      "kw": [
+        "DLET",
+        "FIELDLENGTH",
+        "FROM",
+        "GNP",
+        "GU",
+        "INTO",
+        "ISRT",
+        "PCB",
+        "PSB",
+        "REPL",
+        "SCHD",
+        "SEGLENGTH",
+        "SEGMENT",
+        "USING",
+        "WHERE"
+      ]
+    },
+    "case": "ASIS",
+    "stringDelimiters": "\"'",
+    "specialChars": "()"
+  }
+}

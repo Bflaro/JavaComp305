@@ -1,0 +1,311 @@
+{
+	"name": "gnucobol-debug",
+	"displayName": "COBOL debugger",
+	"description": "Debug or execute COBOL code. No mainframe required.",
+	"keywords": [
+		"cobol",
+		"gnucobol",
+		"debugger",
+		"debug",
+		"code coverage"
+	],
+	"version": "2.32.1",
+	"publisher": "OlegKunitsyn",
+	"license": "GPL-3.0",
+	"icon": "icon.png",
+	"engines": {
+		"vscode": "^1.44.0"
+	},
+	"main": "./out/src/extension",
+	"activationEvents": [
+		"onDebugResolve",
+		"onCommand:gnucobol-debug.dockerStart",
+		"onCommand:gnucobol-debug.dockerStop"
+	],
+	"categories": [
+		"Debuggers"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/OlegKunitsyn/gnucobol-debug.git"
+	},
+	"capabilities": {
+		"untrustedWorkspaces": {
+			"supported": true
+		}
+	},
+	"contributes": {
+		"commands": [
+			{
+				"command": "gnucobol-debug.dockerStart",
+				"title": "GnuCOBOL Docker: start"
+			},
+			{
+				"command": "gnucobol-debug.dockerStop",
+				"title": "GnuCOBOL Docker: stop"
+			}
+		],
+		"breakpoints": [
+			{
+				"language": "cobol"
+			},
+			{
+				"language": "COBOL"
+			},
+			{
+				"language": "ACUCOBOL"
+			},
+			{
+				"language": "OpenCOBOL"
+			},
+			{
+				"language": "GnuCOBOL"
+			},
+			{
+				"language": "entcobol"
+			}
+		],
+		"debuggers": [
+			{
+				"type": "gdb",
+				"program": "./out/src/gdb.js",
+				"runtime": "node",
+				"label": "COBOL debugger",
+				"configurationAttributes": {
+					"launch": {
+						"required": [],
+						"properties": {
+							"target": {
+								"type": "string",
+								"description": "Path to executable",
+								"default": "${file}"
+							},
+							"arguments": {
+								"type": "string",
+								"description": "Extra arguments for executable",
+								"default": null
+							},
+							"cwd": {
+								"type": "string",
+								"description": "Path to project",
+								"default": "${workspaceRoot}"
+							},
+							"gdbpath": {
+								"type": "string",
+								"description": "Path to gdb",
+								"default": "gdb"
+							},
+							"docker": {
+								"type": "string",
+								"description": "Docker image",
+								"default": "olegkunitsyn/gnucobol:3.1-dev"
+							},
+							"cobcpath": {
+								"type": "string",
+								"description": "Path to cobc",
+								"default": "cobc"
+							},
+							"cobcargs": {
+								"type": "array",
+								"description": "Extra arguments for cobc",
+								"default": [
+									"-free",
+									"-x"
+								]
+							},
+							"group": {
+								"type": "array",
+								"description": "Compilation Group for executable",
+								"default": []
+							},
+							"env": {
+								"type": "object",
+								"description": "Environment variables",
+								"default": null
+							},
+							"coverage": {
+								"type": "boolean",
+								"description": "Enable code coverage",
+								"default": true
+							},
+							"verbose": {
+								"type": "boolean",
+								"description": "Debug GDB",
+								"default": false
+							},
+							"gdbtty": {
+								"type": "boolean",
+								"description": "Enable external display for debug",
+								"default": false
+							}
+						}
+					},
+					"attach": {
+						"required": [],
+						"properties": {
+							"target": {
+								"type": "string",
+								"description": "Path to executable",
+								"default": "${file}"
+							},
+							"arguments": {
+								"type": "string",
+								"description": "Extra arguments for executable",
+								"default": null
+							},
+							"cwd": {
+								"type": "string",
+								"description": "Path to project",
+								"default": "${workspaceRoot}"
+							},
+							"gdbpath": {
+								"type": "string",
+								"description": "Path to gdb",
+								"default": "gdb"
+							},
+							"cobcpath": {
+								"type": "string",
+								"description": "Path to cobc",
+								"default": "cobc"
+							},
+							"cobcargs": {
+								"type": "array",
+								"description": "Extra arguments for cobc",
+								"default": [
+									"-free",
+									"-x"
+								]
+							},
+							"group": {
+								"type": "array",
+								"description": "Compilation Group for executable",
+								"default": []
+							},
+							"env": {
+								"type": "object",
+								"description": "Environment variables",
+								"default": null
+							},
+							"verbose": {
+								"type": "boolean",
+								"description": "Debug GDB",
+								"default": false
+							},
+							"pid": {
+								"type": "string",
+								"description": "PID of the executable",
+								"default": null
+							},
+							"remoteDebugger": {
+								"type": "string",
+								"description": "GDB Server host:port",
+								"default": null
+							}
+						}
+					}
+				},
+				"initialConfigurations": [
+					{
+						"name": "COBOL debugger",
+						"type": "gdb",
+						"request": "launch",
+						"cobcargs": [
+							"-free",
+							"-x"
+						],
+						"coverage": true,
+						"gdbtty": true
+					},
+					{
+						"name": "COBOL debugger attach local",
+						"type": "gdb",
+						"request": "attach",
+						"cobcargs": [
+							"-free",
+							"-x"
+						],
+						"pid": "${input:pid}"
+					},
+					{
+						"name": "COBOL debugger attach remote",
+						"type": "gdb",
+						"request": "attach",
+						"cobcargs": [
+							"-free",
+							"-x"
+						],
+						"remoteDebugger": "${input:remoteDebugger}"
+					}
+				]
+			}
+		],
+		"configuration": {
+			"type": "object",
+			"title": "COBOL Debugger",
+			"properties": {
+				"Cobol_Debugger.display_variable_attributes": {
+					"type": "boolean",
+					"default": false,
+					"description": "Displaying Data Storages and Fields attributes(e.g. size of Alphanumerics or digits and scale of numerics).",
+					"scope": "resource"
+				},
+				"Cobol_Debugger.cwd": {
+					"type": "string",
+					"default": "${workspaceRoot}",
+					"description": "Path to project",
+					"scope": "application"
+				},
+				"Cobol_Debugger.target": {
+					"type": "string",
+					"description": "Path to source code",
+					"default": "${file}",
+					"scope": "application"
+				},
+				"Cobol_Debugger.gdbpath": {
+					"type": "string",
+					"description": "Path to gdb",
+					"default": "gdb",
+					"scope": "application"
+				},
+				"Cobol_Debugger.cobcpath": {
+					"type": "string",
+					"description": "Path to cobc",
+					"default": "cobc",
+					"scope": "application"
+				}
+			}
+		}
+	},
+	"scripts": {
+		"prepare": "tsc -p ./",
+		"compile": "tsc -p ./",
+		"watch": "tsc -w -p ./",
+		"test": "mocha -u tdd ./out/test/"
+	},
+	"devDependencies": {
+		"@types/mocha": "^5.2.7",
+		"@types/node": "^13.13.0",
+		"@types/vscode": "^1.44.0",
+		"mocha": "^10.2.0",
+		"tslint": "^6.1.3",
+		"typescript": "^3.8.3",
+		"vscode-debugadapter-testsupport": "^1.40.3"
+	},
+	"dependencies": {
+		"gcov-parse": "^1.0.1",
+		"n-readlines": "^1.0.0",
+		"vscode-debugadapter": "^1.40.0",
+		"vscode-debugprotocol": "^1.40.0"
+	},
+	"__metadata": {
+		"id": "52b213a1-dbed-488c-8ae9-fee0b66c2cc7",
+		"publisherId": "98db6bb8-f32a-42c0-8cdd-1290f6c623bc",
+		"publisherDisplayName": "Oleg Kunitsyn",
+		"targetPlatform": "undefined",
+		"isApplicationScoped": false,
+		"updated": true,
+		"isPreReleaseVersion": false,
+		"installedTimestamp": 1692569368381,
+		"preRelease": false
+	}
+}

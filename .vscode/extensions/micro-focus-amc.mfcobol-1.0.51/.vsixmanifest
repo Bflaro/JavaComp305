@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+		<Metadata>
+			<Identity Language="en-US" Id="mfcobol" Version="1.0.51" Publisher="Micro-Focus-AMC" />
+			<DisplayName>Micro Focus COBOL</DisplayName>
+			<Description xml:space="preserve">Extension for COBOL application development</Description>
+			<Tags>Micro Focus,COBOL,MF,Net Express,Server Express,Micro Focus Server,Enterprise Server,NX,SX,OCDS,Animator,snippet,keybindings,debuggers,json,cobol,__ext_cbl,__ext_cpy,__ext_cobol,__ext_cob,__ext_eco,__ext_pco,__ext_ccp,__ext_sqb,__ext_cpv,__ext_cpf,__ext_ss,__ext_cpb,__ext_cls,__ext_ins,__ext_if,__ext_v1,__ext_mf,__ext_prc,xml,__ext_cblproj,__ext_cobolBuild,__ext_cobolProj,dialogsystem,__ext_gs,cobconfig,CobConfig,__ext_cfg,COBOL Directives,COBOL Directives File,__ext_dir,mfdirectives,Micro Focus Directives File,__ext_directivesmf,__web_extension</Tags>
+			<Categories>Programming Languages,Debuggers,Snippets,Notebooks,Other</Categories>
+			<GalleryFlags>Public</GalleryFlags>
+			
+			<Properties>
+				<Property Id="Microsoft.VisualStudio.Code.Engine" Value="^1.73.0" />
+				<Property Id="Microsoft.VisualStudio.Code.ExtensionDependencies" Value="" />
+				<Property Id="Microsoft.VisualStudio.Code.ExtensionPack" Value="" />
+				<Property Id="Microsoft.VisualStudio.Code.ExtensionKind" Value="workspace,web" />
+				<Property Id="Microsoft.VisualStudio.Code.LocalizedLanguages" Value="" />
+				
+				
+				
+				
+				
+				<Property Id="Microsoft.VisualStudio.Services.Branding.Color" Value="#02003C" />
+				<Property Id="Microsoft.VisualStudio.Services.Branding.Theme" Value="dark" />
+				<Property Id="Microsoft.VisualStudio.Services.GitHubFlavoredMarkdown" Value="true" />
+				<Property Id="Microsoft.VisualStudio.Services.Content.Pricing" Value="Free"/>
+
+				
+				
+			</Properties>
+			<License>extension/licenses/license.txt</License>
+			<Icon>extension/icon.png</Icon>
+		</Metadata>
+		<Installation>
+			<InstallationTarget Id="Microsoft.VisualStudio.Code"/>
+		</Installation>
+		<Dependencies/>
+		<Assets>
+			<Asset Type="Microsoft.VisualStudio.Code.Manifest" Path="extension/package.json" Addressable="true" />
+			<Asset Type="Microsoft.VisualStudio.Services.Content.Details" Path="extension/README.md" Addressable="true" />
+<Asset Type="Microsoft.VisualStudio.Services.Content.Changelog" Path="extension/CHANGELOG.md" Addressable="true" />
+<Asset Type="Microsoft.VisualStudio.Services.Content.License" Path="extension/licenses/license.txt" Addressable="true" />
+<Asset Type="Microsoft.VisualStudio.Services.Icons.Default" Path="extension/icon.png" Addressable="true" />
+		</Assets>
+	</PackageManifest>

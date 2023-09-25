@@ -1,0 +1,118 @@
+{
+    "definitions": {
+      "watchpoint": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "sourceFile": {
+            "description": "The source file in which the watchpoint is declared",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "expression": {
+            "description": "The watchpoint item name",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "condition": {
+            "description": "The watchpoint condition",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isConditionEnabled": {
+            "description": "Is the watchpoint condition enabled",
+            "type": "boolean"
+          },
+          "passStyle": {
+            "description": "Watchpoint hit count type",
+            "type": "integer",
+            "enum": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "passCount": {
+            "description": "Watchpoint hit count value",
+            "type": "integer"
+          },
+          "enabled": {
+            "description": "Is the watchpoint enabled or disabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "sourceFile",
+          "expression"
+        ],
+        "defaultSnippets": [
+          {
+            "label": "Add a new watchpoint",
+            "body": { "expression": "<watchpoint name>", "sourceFile": "<source-file-name>", "enabled": true }
+          }
+        ]
+      },
+      "programBreakpoint": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "program": {
+            "description": "The name of the program to break on",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "enabled": {
+            "description": "Is the program breakpoint enabled or disabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "program"
+        ],
+        "defaultSnippets": [
+          {
+            "label": "Add a new program breakpoint",
+            "body": { "program": "<program-name>", "enabled": true }
+          }
+        ]
+      }
+    },
+    "type": "object",
+    "properties": {
+      "watchpoints": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "items": {
+          "$ref": "#/definitions/watchpoint"
+        }
+      },
+      "programBreakpoints": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "items": {
+          "$ref": "#/definitions/programBreakpoint"
+        }
+      }
+    },
+    "required": [
+      "watchpoints",
+      "programBreakpoints"
+    ]
+  }

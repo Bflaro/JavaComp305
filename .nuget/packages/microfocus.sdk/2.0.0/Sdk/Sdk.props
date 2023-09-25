@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <LanguageTargets Condition="'$(MSBuildProjectExtension)' == '.cblproj'">$(MSBuildThisFileDirectory)\..\targets\MicroFocus.COBOL.targets</LanguageTargets>
+    <UsingMicroFocusSdk>true</UsingMicroFocusSdk>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <MicroFocusNETBuildTasksDirectoryRoot>$(MSBuildThisFileDirectory)..\build\</MicroFocusNETBuildTasksDirectoryRoot>
+    <MicroFocusNETBuildTasksTFM Condition=" '$(MSBuildRuntimeType)' == 'Core'">net60</MicroFocusNETBuildTasksTFM>
+    <MicroFocusNETBuildTasksTFM Condition=" '$(MicroFocusNETBuildTasksTFM)' == ''">net472</MicroFocusNETBuildTasksTFM>
+    <!-- Use targets from Visual Studio installation when available for .NET Framework -->
+    <MicroFocusNETBuildTasksDirectory Condition="'$(MicroFocusTargetsDirectory)' == '' and '$(MSBuildRuntimeType)' != 'Core' and Exists('$(MSBuildExtensionsPath)\Micro Focus\Visual COBOL\v1.0')">$(MSBuildExtensionsPath)\Micro Focus\Visual COBOL\v1.0\/</MicroFocusNETBuildTasksDirectory>
+    <!-- Use targets from SDK for .NET Framework outside Visual Studio installation -->
+    <MicroFocusNETBuildTasksDirectory Condition="'$(MicroFocusTargetsDirectory)' == '' and '$(MicroFocusNETBuildTasksDirectory)' == ''">$(MicroFocusNETBuildTasksDirectoryRoot)$(MicroFocusNETBuildTasksTFM)/</MicroFocusNETBuildTasksDirectory>
+    <MicroFocusNETBuildTasksDirectory Condition="'$(MicroFocusTargetsDirectory)' != ''">$(MicroFocusTargetsDirectory)/</MicroFocusNETBuildTasksDirectory>
+    <MicroFocusNETBuildTasksAssembly>$(MicroFocusNETBuildTasksDirectory)MicroFocus.COBOL.BuildTasks.dll</MicroFocusNETBuildTasksAssembly>
+  </PropertyGroup>
+
+  <Import Condition="'$(MFProjectType)' != 'Native'" Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputPath Condition=" '$(OutputPath)' == '' ">bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+
+</Project>

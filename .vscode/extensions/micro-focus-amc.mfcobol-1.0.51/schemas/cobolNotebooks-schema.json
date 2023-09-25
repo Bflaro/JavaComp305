@@ -1,0 +1,163 @@
+{
+  "definitions": {
+    "CobolMetadata": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "target": {
+          "description": "Execution type",
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "native",
+            "dotnet",
+            "jvm"
+          ]
+        },
+        "directives": {
+          "description": "Compiler directives",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "CobolNotebookCell": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "source": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "cell_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "code",
+            "markdown"
+          ]
+        },
+        "metadata": {
+          "$ref": "#/definitions/CobolMetadata"
+        }
+      },
+      "required": [
+        "source",
+        "cell_type"
+      ]
+    },
+    "CobolNotebookLanguage": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "name": {
+          "description": "Code cell language",
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "cobol"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "CobolNotebookMetadata": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "language_info": {
+          "$ref": "#/definitions/CobolNotebookLanguage"
+        },
+        "target": {
+          "description": "Execution type",
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "native",
+            "dotnet",
+            "jvm"
+          ]
+        },
+        "directives": {
+          "description": "Compiler directives",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "required": [
+        "language_info"
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "$ref": "#/definitions/CobolNotebookMetadata"
+    },
+    "cells": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "$ref": "#/definitions/CobolNotebookCell"
+      }
+    },
+    "nbformat": {
+      "description": "Major version",
+      "type": "integer"
+    },
+    "nbformat_minor": {
+      "description": "Minor version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "metadata",
+    "cells",
+    "nbformat",
+    "nbformat_minor"
+  ]
+}
